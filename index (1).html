@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TEVA</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            height: 100vh;
+            overflow: hidden;
+            background: #000;
+        }
+        
+        .bar {
+            position: absolute;
+            width: 100%;
+            height: 8%;
+            background: #000;
+            z-index: 100;
+        }
+        
+        .bar.bottom {
+            bottom: 0;
+        }
+        
+        .center-container {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 95;
+            text-align: center;
+            width: 100%;
+        }
+        
+        .author {
+            margin-bottom: 25px;
+            opacity: 0;
+            animation: fadeInAuthor 2s ease forwards;
+            animation-delay: 0.8s;
+        }
+        
+        .author-text {
+            display: inline-block;
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            color: #f5e28c;
+            text-transform: uppercase;
+            padding: 10px 30px;
+            background: rgba(20, 20, 20, 0.7);
+            border-radius: 15px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(212, 175, 55, 0.4);
+        }
+        
+        .author-text span {
+            color: #d4af37;
+            font-weight: 700;
+        }
+        
+        .app {
+            width: 320px;
+            margin: 0 auto;
+            padding: 40px 30px;
+            border-radius: 28px;
+            background: rgba(20, 20, 20, 0.6);
+            backdrop-filter: blur(25px);
+            box-shadow: 0 50px 120px rgba(0, 0, 0, 0.95);
+            opacity: 0;
+            animation: reveal 2.5s ease forwards;
+            animation-delay: 1.2s;
+        }
+        
+        @keyframes fadeInAuthor {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            from {
+                transform: translateY(-20px);
+            }
+        }
+        
+        @keyframes reveal {
+            to {
+                opacity: 1;
+            }
+        }
+        
+        .sky {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to top,
+                #020111,
+                #0b1d3a,
+                #1e3c72,
+                #5c7cff
+            );
+            animation: skyPulse 16s ease-in-out infinite alternate;
+        }
+        
+        @keyframes skyPulse {
+            from {
+                filter: brightness(0.8);
+            }
+            to {
+                filter: brightness(1.1);
+            }
+        }
+        
+        .birds-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 50;
+            pointer-events: none;
+        }
+        
+        .bird {
+            position: absolute;
+            width: 40px;
+            height: 25px;
+            background: transparent;
+            opacity: 0.7;
+            z-index: 50;
+            filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.3));
+        }
+        
+        .bird-body {
+            position: absolute;
+            width: 30px;
+            height: 15px;
+            background: #ffffff;
+            border-radius: 50%;
+            top: 5px;
+            left: 5px;
+        }
+        
+        .bird-wing {
+            position: absolute;
+            width: 20px;
+            height: 12px;
+            background: #f0f0f0;
+            border-radius: 50%;
+        }
+        
+        .bird-wing.left {
+            top: 8px;
+            left: 0;
+            transform: rotate(-20deg);
+            animation: wingFlapLeft 0.8s infinite alternate;
+        }
+        
+        .bird-wing.right {
+            top: 8px;
+            right: 0;
+            transform: rotate(20deg);
+            animation: wingFlapRight 0.8s infinite alternate;
+        }
+        
+        .bird-tail {
+            position: absolute;
+            width: 15px;
+            height: 10px;
+            background: #f0f0f0;
+            border-radius: 50%;
+            top: 10px;
+            left: 25px;
+            transform: rotate(30deg);
+        }
+        
+        .bird-eye {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: #000;
+            border-radius: 50%;
+            top: 8px;
+            left: 25px;
+        }
+        
+        .bird1 {
+            top: 15%;
+            left: -10%;
+            animation: birdFly1 25s linear infinite;
+        }
+        
+        .bird2 {
+            top: 10%;
+            left: -20%;
+            animation: birdFly2 30s linear infinite;
+            animation-delay: 2s;
+        }
+        
+        .bird3 {
+            top: 12%;
+            left: -40%;
+            animation: birdFly3 28s linear infinite;
+            animation-delay: 5s;
+        }
+        
+        .bird4 {
+            top: 8%;
+            left: -60%;
+            animation: birdFly4 32s linear infinite;
+            animation-delay: 7s;
+        }
+        
+        .bird5 {
+            top: 18%;
+            left: -80%;
+            animation: birdFly5 27s linear infinite;
+            animation-delay: 3s;
+        }
+        
+        @keyframes wingFlapLeft {
+            0% {
+                transform: rotate(-20deg) translateY(0);
+            }
+            100% {
+                transform: rotate(-40deg) translateY(2px);
+            }
+        }
+        
+        @keyframes wingFlapRight {
+            0% {
+                transform: rotate(20deg) translateY(0);
+            }
+            100% {
+                transform: rotate(40deg) translateY(2px);
+            }
+        }
+        
+        @keyframes birdFly1 {
+            0% {
+                transform: translateX(0) translateY(0) rotate(0deg);
+            }
+            25% {
+                transform: translateX(25vw) translateY(5px) rotate(5deg);
+            }
+            50% {
+                transform: translateX(50vw) translateY(-10px) rotate(0deg);
+            }
+            75% {
+                transform: translateX(75vw) translateY(3px) rotate(-5deg);
+            }
+            100% {
+                transform: translateX(100vw) translateY(0) rotate(0deg);
+            }
+        }
+        
+        @keyframes birdFly2 {
+            0% {
+                transform: translateX(0) translateY(0) rotate(0deg);
+            }
+            25% {
+                transform: translateX(30vw) translateY(-5px) rotate(-5deg);
+            }
+            50% {
+                transform: translateX(60vw) translateY(8px) rotate(0deg);
+            }
+            75% {
+                transform: translateX(90vw) translateY(-3px) rotate(5deg);
+            }
+            100% {
+                transform: translateX(120vw) translateY(0) rotate(0deg);
+            }
+        }
+        
+        @keyframes birdFly3 {
+            0% {
+                transform: translateX(0) translateY(0) rotate(0deg);
+            }
+            25% {
+                transform: translateX(20vw) translateY(8px) rotate(3deg);
+            }
+            50% {
+                transform: translateX(40vw) translateY(-5px) rotate(0deg);
+            }
+            75% {
+                transform: translateX(60vw) translateY(12px) rotate(-3deg);
+            }
+            100% {
+                transform: translateX(80vw) translateY(0) rotate(0deg);
+            }
+        }
+        
+        @keyframes birdFly4 {
+            0% {
+                transform: translateX(0) translateY(0) rotate(0deg);
+            }
+            25% {
+                transform: translateX(40vw) translateY(-12px) rotate(-8deg);
+            }
+            50% {
+                transform: translateX(80vw) translateY(5px) rotate(0deg);
+            }
+            75% {
+                transform: translateX(120vw) translateY(-8px) rotate(8deg);
+            }
+            100% {
+                transform: translateX(160vw) translateY(0) rotate(0deg);
+            }
+        }
+        
+        @keyframes birdFly5 {
+            0% {
+                transform: translateX(0) translateY(0) rotate(0deg);
+            }
+            25% {
+                transform: translateX(15vw) translateY(-3px) rotate(2deg);
+            }
+            50% {
+                transform: translateX(30vw) translateY(12px) rotate(0deg);
+            }
+            75% {
+                transform: translateX(45vw) translateY(-5px) rotate(-2deg);
+            }
+            100% {
+                transform: translateX(60vw) translateY(0) rotate(0deg);
+            }
+        }
+        
+        .cloud {
+            position: absolute;
+            top: 25%;
+            width: 420px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 140px;
+            filter: blur(35px);
+            animation: cloudMove 90s linear infinite;
+        }
+        
+        .cloud.c2 {
+            top: 38%;
+            width: 600px;
+            opacity: 0.25;
+            animation-duration: 140s;
+        }
+        
+        @keyframes cloudMove {
+            from {
+                left: -60%;
+            }
+            to {
+                left: 120%;
+            }
+        }
+        
+        .mountain.back {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 60%;
+            background: #060606;
+            opacity: 0.45;
+            clip-path: polygon(
+                0 70%,
+                15% 55%,
+                30% 65%,
+                45% 45%,
+                60% 60%,
+                75% 42%,
+                90% 55%,
+                100% 50%,
+                100% 100%,
+                0 100%
+            );
+        }
+        
+        .mountain.front {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 45%;
+            background: #020202;
+            clip-path: polygon(
+                0 80%,
+                15% 65%,
+                30% 75%,
+                45% 55%,
+                60% 70%,
+                75% 50%,
+                90% 65%,
+                100% 55%,
+                100% 100%,
+                0 100%
+            );
+        }
+        
+        .fog {
+            position: absolute;
+            bottom: 30%;
+            width: 100%;
+            height: 220px;
+            background: linear-gradient(
+                to right,
+                rgba(255, 255, 255, 0.08),
+                rgba(255, 255, 255, 0.02),
+                rgba(255, 255, 255, 0.08)
+            );
+            filter: blur(50px);
+            animation: fogMove 26s ease-in-out infinite alternate;
+        }
+        
+        @keyframes fogMove {
+            from {
+                transform: translateX(-10%);
+            }
+            to {
+                transform: translateX(10%);
+            }
+        }
+        
+        button {
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            padding: 18px;
+            border-radius: 16px;
+            border: none;
+            font-size: 17px;
+            letter-spacing: 2px;
+            font-weight: 600;
+            cursor: pointer;
+            color: #000;
+            background: linear-gradient(135deg, #d4af37, #f5e28c);
+            box-shadow: 0 15px 45px rgba(212, 175, 55, 0.6);
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 50px rgba(212, 175, 55, 0.8);
+        }
+        
+        button::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -120%;
+            width: 60%;
+            height: 100%;
+            background: linear-gradient(
+                120deg,
+                transparent,
+                rgba(255, 255, 255, 1),
+                transparent
+            );
+            animation: shine 3s infinite;
+        }
+        
+        @keyframes shine {
+            0% {
+                left: -120%;
+            }
+            60% {
+                left: 130%;
+            }
+            100% {
+                left: 130%;
+            }
+        }
+        
+        .toast {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #9affd6;
+            display: none;
+            animation: toastFade 0.5s ease;
+        }
+        
+        @keyframes toastFade {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* ស្តាយសម្រាប់លាក់អត្ថបទដែលត្រូវ copy */
+        .text-to-copy {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+            height: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="center-container">
+        <div class="author">
+            <div class="author-text">CODE By: <span>CHAN CHIVA</span></div>
+        </div>
+        
+        <div class="app">
+            <button onclick="copyText()">COPY TEXT</button>
+            <div class="toast" id="toast">✔ Copied Successfully</div>
+        </div>
+    </div>
+    
+    <!-- កន្លែងសម្រាប់កែអត្ថបទដែលត្រូវ copy -->
+    <!-- អ្នកអាចកែអត្ថបទនៅទីនេះ -->
+    <div class="text-to-copy" id="textToCopy">
+កាកម៉េសហ្អា
+    </div>
+    
+    <div class="birds-container">
+        <div class="bird bird1">
+            <div class="bird-body"></div>
+            <div class="bird-wing left"></div>
+            <div class="bird-wing right"></div>
+            <div class="bird-tail"></div>
+            <div class="bird-eye"></div>
+        </div>
+        <div class="bird bird2">
+            <div class="bird-body"></div>
+            <div class="bird-wing left"></div>
+            <div class="bird-wing right"></div>
+            <div class="bird-tail"></div>
+            <div class="bird-eye"></div>
+        </div>
+        <div class="bird bird3">
+            <div class="bird-body"></div>
+            <div class="bird-wing left"></div>
+            <div class="bird-wing right"></div>
+            <div class="bird-tail"></div>
+            <div class="bird-eye"></div>
+        </div>
+        <div class="bird bird4">
+            <div class="bird-body"></div>
+            <div class="bird-wing left"></div>
+            <div class="bird-wing right"></div>
+            <div class="bird-tail"></div>
+            <div class="bird-eye"></div>
+        </div>
+        <div class="bird bird5">
+            <div class="bird-body"></div>
+            <div class="bird-wing left"></div>
+            <div class="bird-wing right"></div>
+            <div class="bird-tail"></div>
+            <div class="bird-eye"></div>
+        </div>
+    </div>
+    
+    <div class="bar bottom"></div>
+    
+    <div class="sky"></div>
+    
+    <div class="cloud"></div>
+    <div class="cloud c2"></div>
+    
+    <div class="fog"></div>
+    
+    <div class="mountain back"></div>
+    <div class="mountain front"></div>
+    
+    <audio id="clickSound">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3">
+    </audio>
+    
+    <script>
+        function copyText() {
+            // យកអត្ថបទពីធាតុដែលមាន id "textToCopy"
+            const textToCopy = document.getElementById("textToCopy").textContent;
+            
+            // ប្រើ Clipboard API ដើម្បី copy អត្ថបទ
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                // បញ្ចេញសម្លេង
+                document.getElementById("clickSound").play();
+                
+                // បង្ហាញសារជោគជ័យ
+                const toast = document.getElementById("toast");
+                toast.style.display = "block";
+                
+                // លាក់សារបន្ទាប់ពី 1.8 វិនាទី
+                setTimeout(() => {
+                    toast.style.display = "none";
+                }, 1800);
+            }).catch(err => {
+                console.error("មានបញ្ហាក្នុងការ copy អត្ថបទ: ", err);
+                // ប្រសិនបើមិនអាច copy បាន ប្រើវិធីប្រឌិត
+                fallbackCopyText(textToCopy);
+            });
+        }
+        
+        // វិធីបម្លែងជំនួសប្រសិនបើ Clipboard API មិនដំណើរការ
+        function fallbackCopyText(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed";
+            textArea.style.opacity = "0";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    document.getElementById("clickSound").play();
+                    const toast = document.getElementById("toast");
+                    toast.style.display = "block";
+                    setTimeout(() => {
+                        toast.style.display = "none";
+                    }, 1800);
+                } else {
+                    alert("មិនអាច copy អត្ថបទបានទេ។ សូមព្យាយាមម្តងទៀត។");
+                }
+            } catch (err) {
+                console.error("មានបញ្ហាក្នុងការ copy: ", err);
+                alert("មិនអាច copy អត្ថបទបានទេ។");
+            }
+            
+            document.body.removeChild(textArea);
+        }
+    </script>
+</body>
+</html>
