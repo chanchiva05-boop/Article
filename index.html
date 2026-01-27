@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TEVA</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+    --bg:#0a0e17;
+    --card:#0f1524cc;
+    --border:rgba(255,255,255,.08);
+    --text:#f3f4f6;
+    --muted:#9ca3af;
+    --accent:#ffffff;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Inter',system-ui,sans-serif;
+}
+
+body{
+    height:100vh;
+    background:
+        radial-gradient(900px 400px at 10% 0%, #1a2140 0%, transparent 60%),
+        radial-gradient(800px 300px at 90% 100%, #11162b 0%, transparent 60%),
+        var(--bg);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:var(--text);
+}
+
+/* ===== CARD ===== */
+.card{
+    width:380px;
+    padding:46px 40px;
+    border-radius:22px;
+    background:var(--card);
+    backdrop-filter:blur(30px);
+    border:1px solid var(--border);
+    box-shadow:
+        0 40px 120px rgba(0,0,0,.55),
+        inset 0 1px 0 rgba(255,255,255,.04);
+    animation:enter .7s ease;
+}
+
+@keyframes enter{
+    from{opacity:0;transform:translateY(12px)}
+    to{opacity:1;transform:translateY(0)}
+}
+
+/* ===== HEADER ===== */
+.header{
+    margin-bottom:36px;
+}
+
+.title{
+    font-size:21px;
+    font-weight:600;
+    letter-spacing:.3px;
+}
+
+.subtitle{
+    margin-top:6px;
+    font-size:13.5px;
+    color:var(--muted);
+}
+
+/* ===== BUTTON ===== */
+button{
+    width:100%;
+    height:54px;
+    border-radius:15px;
+    border:1px solid var(--border);
+    background:var(--accent);
+    color:#0a0e17;
+    font-size:14.5px;
+    font-weight:600;
+    letter-spacing:.8px;
+    cursor:pointer;
+    transition:.18s ease;
+}
+
+button:hover{
+    transform:translateY(-1px);
+}
+
+button:active{
+    transform:scale(.97);
+}
+
+/* ===== VIEWER ===== */
+.viewer{
+    position:fixed;
+    inset:0;
+    background:rgba(5,8,15,.72);
+    backdrop-filter:blur(10px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    opacity:0;
+    pointer-events:none;
+    transition:.28s ease;
+}
+
+.viewer.show{
+    opacity:1;
+    pointer-events:auto;
+}
+
+.viewer img{
+    max-width:86%;
+    max-height:86%;
+    border-radius:20px;
+    box-shadow:0 35px 100px rgba(0,0,0,.75);
+    animation:zoom .28s ease;
+}
+
+@keyframes zoom{
+    from{opacity:0;transform:scale(.96)}
+    to{opacity:1;transform:scale(1)}
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+    <div class="header">
+        <div class="title">TEVA</div>
+        <div class="subtitle">Preview</div>
+    </div>
+
+    <button id="openBtn">Open</button>
+</div>
+
+<div class="viewer" id="viewer">
+    <img src="middle.png" />
+</div>
+
+<audio id="clickSound" src="click.mp3" preload="auto"></audio>
+
+<script>
+const btn = document.getElementById("openBtn");
+const viewer = document.getElementById("viewer");
+const sound = document.getElementById("clickSound");
+
+btn.addEventListener("click", () => {
+    sound.currentTime = 0;
+    sound.play();
+    viewer.classList.add("show");
+});
+
+viewer.addEventListener("click", () => {
+    sound.currentTime = 0;
+    sound.play();
+    viewer.classList.remove("show");
+});
+</script>
+
+</body>
+</html>
