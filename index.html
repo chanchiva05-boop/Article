@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TEVA</title>
+    <title>TEVA | Professional</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Khmer:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
@@ -13,131 +13,341 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Noto Sans Khmer', 'Poppins', 'Khmer OS', 'Khmer OS Battambang', 'Khmer OS Muol', 'Moul', 'Moulpali', sans-serif;
         }
         
         body {
             height: 100vh;
             overflow: hidden;
-            background: #000;
+            background: #0a0a2a;
+            font-family: 'Noto Sans Khmer', 'Inter', system-ui, -apple-system, sans-serif;
         }
         
-        .bar {
-            position: absolute;
-            width: 100%;
-            height: 8%;
-            background: #000;
-            z-index: 100;
-        }
-        
-        .bar.bottom {
-            bottom: 0;
-        }
-        
-        .center-container {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 95;
-            text-align: center;
-            width: 100%;
-        }
-        
-        .author {
-            margin-bottom: 25px;
-            opacity: 0;
-            animation: fadeInAuthor 2s ease forwards;
-            animation-delay: 0.8s;
-        }
-        
-        .author-text {
-            display: inline-block;
-            font-size: 20px;
-            font-weight: 500;
-            letter-spacing: 1px;
-            color: #f5e28c;
-            padding: 10px 30px;
-            background: rgba(20, 20, 20, 0.7);
-            border-radius: 15px;
-            backdrop-filter: blur(12px);
-            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6);
-            border: 1px solid rgba(212, 175, 55, 0.4);
-            font-feature-settings: "khmr";
-            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-            line-height: 1.4;
-            transform: translateY(4px);
-        }
-        
-        .author-text span {
-            color: #d4af37;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-        
-        .app {
-            width: 320px;
-            margin: 0 auto;
-            padding: 40px 30px;
-            border-radius: 28px;
-            background: rgba(20, 20, 20, 0.6);
-            backdrop-filter: blur(25px);
-            box-shadow: 0 50px 120px rgba(0, 0, 0, 0.95);
-            opacity: 0;
-            animation: reveal 2.5s ease forwards;
-            animation-delay: 1.2s;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        
-        @keyframes fadeInAuthor {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-            from {
-                transform: translateY(-20px);
-            }
-        }
-        
-        @keyframes reveal {
-            to {
-                opacity: 1;
-            }
-        }
-        
-        .sky {
-            position: absolute;
+        /* Animated gradient background */
+        .gradient-bg {
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(to top,
-                #020111,
-                #0b1d3a,
-                #1e3c72,
-                #5c7cff
-            );
-            animation: skyPulse 16s ease-in-out infinite alternate;
+            background: radial-gradient(circle at 20% 50%, rgba(25, 35, 70, 0.8), rgba(10, 10, 42, 0.95));
+            z-index: 0;
         }
         
-        @keyframes skyPulse {
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                repeating-linear-gradient(45deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 2px, transparent 2px, transparent 8px),
+                repeating-linear-gradient(135deg, rgba(212,175,55,0.03) 0px, rgba(212,175,55,0.03) 1px, transparent 1px, transparent 12px);
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        /* Floating orbs */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            z-index: 0;
+            animation: floatOrb 20s ease-in-out infinite;
+        }
+        
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(212,175,55,0.4), rgba(100,80,20,0.1));
+            top: -150px;
+            right: -100px;
+            animation-delay: 0s;
+        }
+        
+        .orb-2 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(80,120,200,0.3), rgba(30,50,100,0.1));
+            bottom: -200px;
+            left: -150px;
+            animation-delay: -5s;
+        }
+        
+        .orb-3 {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(245,226,140,0.3), rgba(150,120,50,0.1));
+            top: 40%;
+            left: 20%;
+            animation-delay: -10s;
+        }
+        
+        @keyframes floatOrb {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -40px) scale(1.05); }
+            66% { transform: translate(-20px, 30px) scale(0.95); }
+        }
+        
+        /* Glass panel */
+        .glass-panel {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 20;
+            text-align: center;
+            width: 100%;
+            max-width: 480px;
+            padding: 0 20px;
+        }
+        
+        /* Enlarged date badge */
+        .header-badge {
+            margin-bottom: 40px;
+            opacity: 0;
+            animation: fadeSlideUp 0.8s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
+            animation-delay: 0.3s;
+        }
+        
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 14px;
+            background: rgba(15, 20, 35, 0.7);
+            backdrop-filter: blur(20px);
+            padding: 16px 32px;
+            border-radius: 120px;
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
+        }
+        
+        .badge:hover {
+            border-color: rgba(212, 175, 55, 0.7);
+            box-shadow: 0 16px 32px rgba(212, 175, 55, 0.15);
+            transform: scale(1.02);
+        }
+        
+        .badge-icon {
+            width: 10px;
+            height: 10px;
+            background: #d4af37;
+            border-radius: 50%;
+            box-shadow: 0 0 12px #d4af37;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.4); }
+        }
+        
+        .badge-text {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            color: #f0e9cf;
+            text-transform: uppercase;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .badge-text span {
+            color: #d4af37;
+            font-weight: 700;
+            font-size: 19px;
+        }
+        
+        /* Main card */
+        .card {
+            background: rgba(12, 18, 28, 0.55);
+            backdrop-filter: blur(24px);
+            border-radius: 48px;
+            padding: 48px 32px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.05);
+            opacity: 0;
+            animation: fadeSlideUp 0.8s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
+            animation-delay: 0.5s;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 40px 70px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255,255,255,0.08);
+            border-color: rgba(212, 175, 55, 0.35);
+        }
+        
+        @keyframes fadeSlideUp {
             from {
-                filter: brightness(0.8);
+                opacity: 0;
+                transform: translateY(30px);
             }
             to {
-                filter: brightness(1.1);
+                opacity: 1;
+                transform: translateY(0);
             }
         }
         
+        /* Button group */
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        
+        /* Professional button design */
+        .btn {
+            position: relative;
+            width: 100%;
+            padding: 18px 24px;
+            border: none;
+            border-radius: 40px;
+            font-size: 17px;
+            font-weight: 600;
+            font-family: 'Noto Sans Khmer', 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            overflow: hidden;
+            letter-spacing: 1px;
+            background: linear-gradient(105deg, #1e2a3a 0%, #0f1722 100%);
+            color: #e8e2c7;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            border-color: rgba(212, 175, 55, 0.6);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.2);
+            background: linear-gradient(105deg, #253544, #121a28);
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+        }
+        
+        .btn-glow {
+            position: absolute;
+            inset: 0;
+            border-radius: 40px;
+            background: radial-gradient(circle at 30% 50%, rgba(212,175,55,0.15), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        
+        .btn:hover .btn-glow {
+            opacity: 1;
+        }
+        
+        /* Toast notification */
+        .toast-premium {
+            margin-top: 24px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: rgba(10, 20, 18, 0.85);
+            backdrop-filter: blur(16px);
+            padding: 12px 24px;
+            border-radius: 60px;
+            border: 1px solid rgba(74, 222, 128, 0.4);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+            animation: toastGlide 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .toast-premium .toast-icon {
+            font-size: 18px;
+            filter: drop-shadow(0 0 4px #4ade80);
+        }
+        
+        .toast-premium .toast-message {
+            font-size: 14px;
+            font-weight: 500;
+            color: #4ade80;
+            letter-spacing: 0.3px;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        @keyframes toastGlide {
+            from {
+                opacity: 0;
+                transform: translateY(15px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        /* Decorative lines */
+        .line-decoration {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #d4af37, #f5e28c, #d4af37, transparent);
+            bottom: -25px;
+            border-radius: 2px;
+        }
+        
+        .card-footer {
+            margin-top: 28px;
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+        }
+        
+        .dot {
+            width: 6px;
+            height: 6px;
+            background: rgba(212, 175, 55, 0.5);
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+        
+        .card:hover .dot {
+            background: rgba(212, 175, 55, 0.9);
+            box-shadow: 0 0 8px rgba(212, 175, 55, 0.6);
+        }
+        
+        /* Hide original text containers */
+        .text-to-copy {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+            height: 0;
+            overflow: hidden;
+        }
+        
+        /* Birds */
         .birds-container {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 50;
+            z-index: 15;
             pointer-events: none;
         }
         
@@ -146,16 +356,15 @@
             width: 40px;
             height: 25px;
             background: transparent;
-            opacity: 0.7;
-            z-index: 50;
-            filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.3));
+            opacity: 0.6;
+            filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.2));
         }
         
         .bird-body {
             position: absolute;
             width: 30px;
             height: 15px;
-            background: #ffffff;
+            background: rgba(255, 245, 200, 0.8);
             border-radius: 50%;
             top: 5px;
             left: 5px;
@@ -165,7 +374,7 @@
             position: absolute;
             width: 20px;
             height: 12px;
-            background: #f0f0f0;
+            background: rgba(255, 240, 180, 0.8);
             border-radius: 50%;
         }
         
@@ -173,21 +382,21 @@
             top: 8px;
             left: 0;
             transform: rotate(-20deg);
-            animation: wingFlapLeft 0.8s infinite alternate;
+            animation: wingFlapLeft 0.8s infinite alternate ease-in-out;
         }
         
         .bird-wing.right {
             top: 8px;
             right: 0;
             transform: rotate(20deg);
-            animation: wingFlapRight 0.8s infinite alternate;
+            animation: wingFlapRight 0.8s infinite alternate ease-in-out;
         }
         
         .bird-tail {
             position: absolute;
             width: 15px;
             height: 10px;
-            background: #f0f0f0;
+            background: rgba(255, 235, 170, 0.8);
             border-radius: 50%;
             top: 10px;
             left: 25px;
@@ -198,448 +407,213 @@
             position: absolute;
             width: 3px;
             height: 3px;
-            background: #000;
+            background: #2a2418;
             border-radius: 50%;
             top: 8px;
             left: 25px;
         }
         
-        .bird1 {
-            top: 15%;
-            left: -10%;
-            animation: birdFly1 25s linear infinite;
-        }
-        
-        .bird2 {
-            top: 10%;
-            left: -20%;
-            animation: birdFly2 30s linear infinite;
-            animation-delay: 2s;
-        }
-        
-        .bird3 {
-            top: 12%;
-            left: -40%;
-            animation: birdFly3 28s linear infinite;
-            animation-delay: 5s;
-        }
-        
-        .bird4 {
-            top: 8%;
-            left: -60%;
-            animation: birdFly4 32s linear infinite;
-            animation-delay: 7s;
-        }
-        
-        .bird5 {
-            top: 18%;
-            left: -80%;
-            animation: birdFly5 27s linear infinite;
-            animation-delay: 3s;
-        }
-        
         @keyframes wingFlapLeft {
-            0% {
-                transform: rotate(-20deg) translateY(0);
-            }
-            100% {
-                transform: rotate(-40deg) translateY(2px);
-            }
+            0% { transform: rotate(-20deg) translateY(0); }
+            100% { transform: rotate(-40deg) translateY(2px); }
         }
         
         @keyframes wingFlapRight {
-            0% {
-                transform: rotate(20deg) translateY(0);
-            }
-            100% {
-                transform: rotate(40deg) translateY(2px);
-            }
+            0% { transform: rotate(20deg) translateY(0); }
+            100% { transform: rotate(40deg) translateY(2px); }
         }
         
-        @keyframes birdFly1 {
-            0% {
-                transform: translateX(0) translateY(0) rotate(0deg);
-            }
-            25% {
-                transform: translateX(25vw) translateY(5px) rotate(5deg);
-            }
-            50% {
-                transform: translateX(50vw) translateY(-10px) rotate(0deg);
-            }
-            75% {
-                transform: translateX(75vw) translateY(3px) rotate(-5deg);
-            }
-            100% {
-                transform: translateX(100vw) translateY(0) rotate(0deg);
-            }
-        }
+        .bird1 { top: 12%; left: -10%; animation: flyPath1 28s linear infinite; }
+        .bird2 { top: 18%; left: -20%; animation: flyPath2 32s linear infinite; animation-delay: 2s; }
+        .bird3 { top: 8%; left: -40%; animation: flyPath3 30s linear infinite; animation-delay: 5s; }
+        .bird4 { top: 22%; left: -60%; animation: flyPath4 35s linear infinite; animation-delay: 7s; }
+        .bird5 { top: 15%; left: -80%; animation: flyPath5 26s linear infinite; animation-delay: 3s; }
         
-        @keyframes birdFly2 {
-            0% {
-                transform: translateX(0) translateY(0) rotate(0deg);
-            }
-            25% {
-                transform: translateX(30vw) translateY(-5px) rotate(-5deg);
-            }
-            50% {
-                transform: translateX(60vw) translateY(8px) rotate(0deg);
-            }
-            75% {
-                transform: translateX(90vw) translateY(-3px) rotate(5deg);
-            }
-            100% {
-                transform: translateX(120vw) translateY(0) rotate(0deg);
-            }
-        }
+        @keyframes flyPath1 { 0% { transform: translateX(0) translateY(0); } 100% { transform: translateX(130vw) translateY(20px); } }
+        @keyframes flyPath2 { 0% { transform: translateX(0) translateY(0); } 100% { transform: translateX(140vw) translateY(-15px); } }
+        @keyframes flyPath3 { 0% { transform: translateX(0) translateY(0); } 100% { transform: translateX(125vw) translateY(10px); } }
+        @keyframes flyPath4 { 0% { transform: translateX(0) translateY(0); } 100% { transform: translateX(150vw) translateY(-8px); } }
+        @keyframes flyPath5 { 0% { transform: translateX(0) translateY(0); } 100% { transform: translateX(120vw) translateY(15px); } }
         
-        @keyframes birdFly3 {
-            0% {
-                transform: translateX(0) translateY(0) rotate(0deg);
-            }
-            25% {
-                transform: translateX(20vw) translateY(8px) rotate(3deg);
-            }
-            50% {
-                transform: translateX(40vw) translateY(-5px) rotate(0deg);
-            }
-            75% {
-                transform: translateX(60vw) translateY(12px) rotate(-3deg);
-            }
-            100% {
-                transform: translateX(80vw) translateY(0) rotate(0deg);
-            }
-        }
-        
-        @keyframes birdFly4 {
-            0% {
-                transform: translateX(0) translateY(0) rotate(0deg);
-            }
-            25% {
-                transform: translateX(40vw) translateY(-12px) rotate(-8deg);
-            }
-            50% {
-                transform: translateX(80vw) translateY(5px) rotate(0deg);
-            }
-            75% {
-                transform: translateX(120vw) translateY(-8px) rotate(8deg);
-            }
-            100% {
-                transform: translateX(160vw) translateY(0) rotate(0deg);
-            }
-        }
-        
-        @keyframes birdFly5 {
-            0% {
-                transform: translateX(0) translateY(0) rotate(0deg);
-            }
-            25% {
-                transform: translateX(15vw) translateY(-3px) rotate(2deg);
-            }
-            50% {
-                transform: translateX(30vw) translateY(12px) rotate(0deg);
-            }
-            75% {
-                transform: translateX(45vw) translateY(-5px) rotate(-2deg);
-            }
-            100% {
-                transform: translateX(60vw) translateY(0) rotate(0deg);
-            }
-        }
-        
-        .cloud {
-            position: absolute;
-            top: 25%;
-            width: 420px;
-            height: 150px;
-            background: rgba(255, 255, 255, 0.25);
-            border-radius: 140px;
-            filter: blur(35px);
-            animation: cloudMove 90s linear infinite;
-        }
-        
-        .cloud.c2 {
-            top: 38%;
-            width: 600px;
-            opacity: 0.25;
-            animation-duration: 140s;
-        }
-        
-        @keyframes cloudMove {
-            from {
-                left: -60%;
-            }
-            to {
-                left: 120%;
-            }
-        }
-        
-        .mountain.back {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            height: 60%;
-            background: #060606;
-            opacity: 0.45;
-            clip-path: polygon(
-                0 70%,
-                15% 55%,
-                30% 65%,
-                45% 45%,
-                60% 60%,
-                75% 42%,
-                90% 55%,
-                100% 50%,
-                100% 100%,
-                0 100%
-            );
-        }
-        
-        .mountain.front {
+        /* Mountain silhouettes */
+        .mountain-scene {
             position: absolute;
             bottom: 0;
             width: 100%;
             height: 45%;
-            background: #020202;
-            clip-path: polygon(
-                0 80%,
-                15% 65%,
-                30% 75%,
-                45% 55%,
-                60% 70%,
-                75% 50%,
-                90% 65%,
-                100% 55%,
-                100% 100%,
-                0 100%
-            );
-        }
-        
-        .fog {
-            position: absolute;
-            bottom: 30%;
-            width: 100%;
-            height: 220px;
-            background: linear-gradient(
-                to right,
-                rgba(255, 255, 255, 0.08),
-                rgba(255, 255, 255, 0.02),
-                rgba(255, 255, 255, 0.08)
-            );
-            filter: blur(50px);
-            animation: fogMove 26s ease-in-out infinite alternate;
-        }
-        
-        @keyframes fogMove {
-            from {
-                transform: translateX(-10%);
-            }
-            to {
-                transform: translateX(10%);
-            }
-        }
-        
-        button {
-            position: relative;
-            overflow: hidden;
-            width: 100%;
-            padding: 18px;
-            border-radius: 16px;
-            border: none;
-            font-size: 18px;
-            letter-spacing: 1px;
-            font-weight: 600;
-            cursor: pointer;
-            color: #1a1a2e;
-            background: linear-gradient(135deg, #d4af37, #f5e28c);
-            box-shadow: 0 15px 45px rgba(212, 175, 55, 0.6);
-            transition: all 0.3s ease;
-            font-family: 'Noto Sans Khmer', 'Poppins', sans-serif;
-            font-feature-settings: "khmr";
-            text-shadow: 0 1px 1px rgba(255,255,255,0.3);
-            line-height: 1.3;
-            transform: translateY(2px);
-        }
-        
-        button:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 20px 50px rgba(212, 175, 55, 0.8);
-        }
-        
-        button::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: -120%;
-            width: 60%;
-            height: 100%;
-            background: linear-gradient(
-                120deg,
-                transparent,
-                rgba(255, 255, 255, 0.8),
-                transparent
-            );
-            animation: shine 3s infinite;
-        }
-        
-        @keyframes shine {
-            0% {
-                left: -120%;
-            }
-            60% {
-                left: 130%;
-            }
-            100% {
-                left: 130%;
-            }
-        }
-        
-        .toast {
-            margin-top: 20px;
-            font-size: 15px;
-            font-weight: 500;
-            color: #4ade80;
-            background: rgba(0,0,0,0.75);
-            padding: 8px 16px;
-            border-radius: 40px;
-            display: none;
-            animation: toastFade 0.5s ease;
-            font-family: 'Noto Sans Khmer', 'Poppins', sans-serif;
-            letter-spacing: 0.5px;
-            line-height: 1.4;
-            transform: translateY(3px);
-            text-shadow: 0 1px 1px rgba(0,0,0,0.3);
-            border: 1px solid rgba(74, 222, 128, 0.3);
-        }
-        
-        @keyframes toastFade {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(3px);
-            }
-        }
-        
-        .text-to-copy {
-            position: absolute;
-            opacity: 0;
+            z-index: 5;
             pointer-events: none;
-            height: 0;
-            overflow: hidden;
         }
         
-        @media (max-width: 480px) {
-            .author-text {
-                font-size: 16px;
-                padding: 8px 20px;
-                transform: translateY(3px);
+        .peak {
+            position: absolute;
+            bottom: 0;
+            background: linear-gradient(180deg, rgba(8, 12, 22, 0.9), rgba(0, 0, 0, 0.7));
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+        }
+        
+        .peak-1 { left: 5%; width: 28%; height: 70%; opacity: 0.5; }
+        .peak-2 { left: 25%; width: 32%; height: 85%; opacity: 0.6; }
+        .peak-3 { left: 55%; width: 25%; height: 60%; opacity: 0.45; }
+        .peak-4 { left: 75%; width: 22%; height: 75%; opacity: 0.55; }
+        
+        /* Fog effect */
+        .mist {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 35%;
+            background: linear-gradient(to top, rgba(255,255,245,0.08), transparent);
+            filter: blur(40px);
+            z-index: 6;
+            pointer-events: none;
+            animation: mistMove 22s ease-in-out infinite alternate;
+        }
+        
+        @keyframes mistMove {
+            0% { opacity: 0.4; transform: translateX(-5%); }
+            100% { opacity: 0.8; transform: translateX(5%); }
+        }
+        
+        /* Floating particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+        }
+        
+        .particle {
+            position: absolute;
+            background: rgba(212, 175, 55, 0.3);
+            border-radius: 50%;
+            animation: floatParticle 12s infinite linear;
+        }
+        
+        @keyframes floatParticle {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.5; }
+            90% { opacity: 0.5; }
+            100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; }
+        }
+        
+        @media (max-width: 500px) {
+            .glass-panel {
+                max-width: 380px;
             }
-            
-            .app {
-                width: 280px;
-                padding: 30px 25px;
+            .badge {
+                padding: 12px 24px;
+                gap: 10px;
             }
-            
-            button {
-                font-size: 16px;
-                padding: 15px;
-                transform: translateY(1px);
-            }
-            
-            button:hover {
-                transform: translateY(-1px);
-            }
-            
-            .toast {
+            .badge-text {
                 font-size: 14px;
-                transform: translateY(2px);
             }
-            
-            @keyframes toastFade {
-                from {
-                    opacity: 0;
-                    transform: translateY(8px);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateY(2px);
-                }
+            .badge-text span {
+                font-size: 15px;
+            }
+            .card {
+                padding: 36px 24px;
+                border-radius: 40px;
+            }
+            .btn {
+                padding: 15px 20px;
+                font-size: 15px;
             }
         }
     </style>
 </head>
 
 <body>
-    <div class="center-container">
-        <div class="author">
-            <div class="author-text">កាលបរិច្ឆេទកំណែ: <span>20 មីនា 2026</span></div>
+    <div class="gradient-bg"></div>
+    <div class="animated-bg"></div>
+    
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    
+    <div class="particles" id="particles"></div>
+    
+    <div class="glass-panel">
+        <div class="header-badge">
+            <div class="badge">
+                <div class="badge-icon"></div>
+                <div class="badge-text">កាលបរិច្ឆេទកំណែ · <span>20 មីនា 2026</span></div>
+            </div>
         </div>
         
-        <div class="app">
-            <button onclick="copyText()">មេតហ្វូន</button>
-            <button onclick="copyCode()">សែលកាត</button>
-            <div class="toast" id="toast">✔ ចម្លងជោគជ័យ</div>
-            <div class="toast" id="toastCode">✔ ចម្លងជោគជ័យ</div>
+        <div class="card">
+            <div class="button-group">
+                <button class="btn" onclick="copyText()">
+                    <span>មេតហ្វូន</span>
+                    <div class="btn-glow"></div>
+                </button>
+                <button class="btn" onclick="copyCode()">
+                    <span>សែលកាត</span>
+                    <div class="btn-glow"></div>
+                </button>
+            </div>
+            
+            <div style="display: flex; justify-content: center; margin-top: 28px;">
+                <div id="toast" class="toast-premium" style="display: none;">
+                    <span class="toast-icon">✓</span>
+                    <span class="toast-message">ចម្លងជោគជ័យ</span>
+                </div>
+                <div id="toastCode" class="toast-premium" style="display: none;">
+                    <span class="toast-icon">✓</span>
+                    <span class="toast-message">ចម្លងជោគជ័យ</span>
+                </div>
+            </div>
+            
+            <div class="card-footer">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+            <div class="line-decoration"></div>
         </div>
     </div>
     
     <div class="text-to-copy" id="textToCopy">កំពុងផ្ទុកអត្ថបទ...</div>
-    
     <div class="text-to-copy" id="codeToCopy">កំពុងផ្ទុកកូដ...</div>
     
     <div class="birds-container">
-        <div class="bird bird1">
-            <div class="bird-body"></div>
-            <div class="bird-wing left"></div>
-            <div class="bird-wing right"></div>
-            <div class="bird-tail"></div>
-            <div class="bird-eye"></div>
-        </div>
-        <div class="bird bird2">
-            <div class="bird-body"></div>
-            <div class="bird-wing left"></div>
-            <div class="bird-wing right"></div>
-            <div class="bird-tail"></div>
-            <div class="bird-eye"></div>
-        </div>
-        <div class="bird bird3">
-            <div class="bird-body"></div>
-            <div class="bird-wing left"></div>
-            <div class="bird-wing right"></div>
-            <div class="bird-tail"></div>
-            <div class="bird-eye"></div>
-        </div>
-        <div class="bird bird4">
-            <div class="bird-body"></div>
-            <div class="bird-wing left"></div>
-            <div class="bird-wing right"></div>
-            <div class="bird-tail"></div>
-            <div class="bird-eye"></div>
-        </div>
-        <div class="bird bird5">
-            <div class="bird-body"></div>
-            <div class="bird-wing left"></div>
-            <div class="bird-wing right"></div>
-            <div class="bird-tail"></div>
-            <div class="bird-eye"></div>
-        </div>
+        <div class="bird bird1"><div class="bird-body"></div><div class="bird-wing left"></div><div class="bird-wing right"></div><div class="bird-tail"></div><div class="bird-eye"></div></div>
+        <div class="bird bird2"><div class="bird-body"></div><div class="bird-wing left"></div><div class="bird-wing right"></div><div class="bird-tail"></div><div class="bird-eye"></div></div>
+        <div class="bird bird3"><div class="bird-body"></div><div class="bird-wing left"></div><div class="bird-wing right"></div><div class="bird-tail"></div><div class="bird-eye"></div></div>
+        <div class="bird bird4"><div class="bird-body"></div><div class="bird-wing left"></div><div class="bird-wing right"></div><div class="bird-tail"></div><div class="bird-eye"></div></div>
+        <div class="bird bird5"><div class="bird-body"></div><div class="bird-wing left"></div><div class="bird-wing right"></div><div class="bird-tail"></div><div class="bird-eye"></div></div>
     </div>
     
-    <div class="bar bottom"></div>
+    <div class="mountain-scene">
+        <div class="peak peak-1"></div>
+        <div class="peak peak-2"></div>
+        <div class="peak peak-3"></div>
+        <div class="peak peak-4"></div>
+    </div>
     
-    <div class="sky"></div>
-    
-    <div class="cloud"></div>
-    <div class="cloud c2"></div>
-    
-    <div class="fog"></div>
-    
-    <div class="mountain back"></div>
-    <div class="mountain front"></div>
+    <div class="mist"></div>
     
     <script>
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 45; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                const size = Math.random() * 3 + 1;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = 8 + Math.random() * 12 + 's';
+                particle.style.opacity = Math.random() * 0.4 + 0.2;
+                container.appendChild(particle);
+            }
+        }
+        createParticles();
+        
         async function loadTextContent() {
             try {
                 const response = await fetch('text-content.txt?' + new Date().getTime());
@@ -671,30 +645,27 @@
         loadTextContent();
         loadCodeContent();
 
+        function showToast(element) {
+            element.style.display = 'flex';
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 1800);
+        }
+
         function copyText() {
             const textToCopy = document.getElementById("textToCopy").textContent;
-            
             navigator.clipboard.writeText(textToCopy).then(() => {
-                const toast = document.getElementById("toast");
-                toast.style.display = "block";
-                setTimeout(() => {
-                    toast.style.display = "none";
-                }, 1800);
-            }).catch(err => {
+                showToast(document.getElementById("toast"));
+            }).catch(() => {
                 fallbackCopyText(textToCopy, "toast");
             });
         }
         
         function copyCode() {
             const codeToCopy = document.getElementById("codeToCopy").textContent;
-            
             navigator.clipboard.writeText(codeToCopy).then(() => {
-                const toastCode = document.getElementById("toastCode");
-                toastCode.style.display = "block";
-                setTimeout(() => {
-                    toastCode.style.display = "none";
-                }, 1800);
-            }).catch(err => {
+                showToast(document.getElementById("toastCode"));
+            }).catch(() => {
                 fallbackCopyText(codeToCopy, "toastCode");
             });
         }
@@ -705,24 +676,16 @@
             textArea.style.position = "fixed";
             textArea.style.opacity = "0";
             document.body.appendChild(textArea);
-            textArea.focus();
             textArea.select();
-            
             try {
-                const successful = document.execCommand('copy');
-                if (successful) {
-                    const toast = document.getElementById(toastId);
-                    toast.style.display = "block";
-                    setTimeout(() => {
-                        toast.style.display = "none";
-                    }, 1800);
+                if (document.execCommand('copy')) {
+                    showToast(document.getElementById(toastId));
                 } else {
-                    alert("មិនអាចចម្លងអត្ថបទបានទេ។ សូមព្យាយាមម្តងទៀត។");
+                    alert("មិនអាចចម្លងអត្ថបទបានទេ។");
                 }
             } catch (err) {
                 alert("មិនអាចចម្លងអត្ថបទបានទេ។");
             }
-            
             document.body.removeChild(textArea);
         }
     </script>
