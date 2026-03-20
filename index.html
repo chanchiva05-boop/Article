@@ -5,14 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TEVA</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Khmer:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Noto Sans Khmer', 'Poppins', 'Khmer OS', 'Khmer OS Battambang', 'Khmer OS Muol', 'Moul', 'Moulpali', sans-serif;
         }
         
         body {
@@ -53,21 +54,25 @@
         .author-text {
             display: inline-block;
             font-size: 20px;
-            font-weight: 600;
-            letter-spacing: 2px;
+            font-weight: 500;
+            letter-spacing: 1px;
             color: #f5e28c;
-            text-transform: uppercase;
             padding: 10px 30px;
             background: rgba(20, 20, 20, 0.7);
             border-radius: 15px;
             backdrop-filter: blur(12px);
             box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6);
             border: 1px solid rgba(212, 175, 55, 0.4);
+            font-feature-settings: "khmr";
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            line-height: 1.4;
+            transform: translateY(4px);
         }
         
         .author-text span {
             color: #d4af37;
             font-weight: 700;
+            letter-spacing: 0.5px;
         }
         
         .app {
@@ -440,18 +445,23 @@
             padding: 18px;
             border-radius: 16px;
             border: none;
-            font-size: 17px;
-            letter-spacing: 2px;
+            font-size: 18px;
+            letter-spacing: 1px;
             font-weight: 600;
             cursor: pointer;
-            color: #000;
+            color: #1a1a2e;
             background: linear-gradient(135deg, #d4af37, #f5e28c);
             box-shadow: 0 15px 45px rgba(212, 175, 55, 0.6);
             transition: all 0.3s ease;
+            font-family: 'Noto Sans Khmer', 'Poppins', sans-serif;
+            font-feature-settings: "khmr";
+            text-shadow: 0 1px 1px rgba(255,255,255,0.3);
+            line-height: 1.3;
+            transform: translateY(2px);
         }
         
         button:hover {
-            transform: translateY(-3px);
+            transform: translateY(-1px);
             box-shadow: 0 20px 50px rgba(212, 175, 55, 0.8);
         }
         
@@ -465,7 +475,7 @@
             background: linear-gradient(
                 120deg,
                 transparent,
-                rgba(255, 255, 255, 1),
+                rgba(255, 255, 255, 0.8),
                 transparent
             );
             animation: shine 3s infinite;
@@ -485,10 +495,20 @@
         
         .toast {
             margin-top: 20px;
-            font-size: 14px;
-            color: #9affd6;
+            font-size: 15px;
+            font-weight: 500;
+            color: #4ade80;
+            background: rgba(0,0,0,0.75);
+            padding: 8px 16px;
+            border-radius: 40px;
             display: none;
             animation: toastFade 0.5s ease;
+            font-family: 'Noto Sans Khmer', 'Poppins', sans-serif;
+            letter-spacing: 0.5px;
+            line-height: 1.4;
+            transform: translateY(3px);
+            text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+            border: 1px solid rgba(74, 222, 128, 0.3);
         }
         
         @keyframes toastFade {
@@ -498,17 +518,55 @@
             }
             to {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateY(3px);
             }
         }
         
-        /* ស្តាយសម្រាប់លាក់អត្ថបទដែលត្រូវ copy */
         .text-to-copy {
             position: absolute;
             opacity: 0;
             pointer-events: none;
             height: 0;
             overflow: hidden;
+        }
+        
+        @media (max-width: 480px) {
+            .author-text {
+                font-size: 16px;
+                padding: 8px 20px;
+                transform: translateY(3px);
+            }
+            
+            .app {
+                width: 280px;
+                padding: 30px 25px;
+            }
+            
+            button {
+                font-size: 16px;
+                padding: 15px;
+                transform: translateY(1px);
+            }
+            
+            button:hover {
+                transform: translateY(-1px);
+            }
+            
+            .toast {
+                font-size: 14px;
+                transform: translateY(2px);
+            }
+            
+            @keyframes toastFade {
+                from {
+                    opacity: 0;
+                    transform: translateY(8px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(2px);
+                }
+            }
         }
     </style>
 </head>
@@ -522,15 +580,13 @@
         <div class="app">
             <button onclick="copyText()">មេតហ្វូន</button>
             <button onclick="copyCode()">សែលកាត</button>
-            <div class="toast" id="toast">✔ Copied Successfully</div>
-            <div class="toast" id="toastCode">✔ Copied Successfully</div>
+            <div class="toast" id="toast">✔ ចម្លងជោគជ័យ</div>
+            <div class="toast" id="toastCode">✔ ចម្លងជោគជ័យ</div>
         </div>
     </div>
     
-    <!-- កន្លែងសម្រាប់អត្ថបទដែលត្រូវ copy (ពី txt file ទី1) -->
     <div class="text-to-copy" id="textToCopy">កំពុងផ្ទុកអត្ថបទ...</div>
     
-    <!-- កន្លែងសម្រាប់ CODE: TEVA555 (ពី txt file ទី2) -->
     <div class="text-to-copy" id="codeToCopy">កំពុងផ្ទុកកូដ...</div>
     
     <div class="birds-container">
@@ -583,12 +639,7 @@
     <div class="mountain back"></div>
     <div class="mountain front"></div>
     
-    <audio id="clickSound">
-        <source src="https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3">
-    </audio>
-    
     <script>
-        // ផ្ទុកអត្ថបទពី file txt ទី1: text-content.txt
         async function loadTextContent() {
             try {
                 const response = await fetch('text-content.txt?' + new Date().getTime());
@@ -599,12 +650,10 @@
                     document.getElementById('textToCopy').textContent = 'កាកម៉េសហ្អា';
                 }
             } catch (error) {
-                console.log('មិនអាចផ្ទុកអត្ថបទពី text-content.txt បានទេ');
                 document.getElementById('textToCopy').textContent = 'កាកម៉េសហ្អា';
             }
         }
 
-        // ផ្ទុកកូដពី file txt ទី2: code-content.txt
         async function loadCodeContent() {
             try {
                 const response = await fetch('code-content.txt?' + new Date().getTime());
@@ -615,12 +664,10 @@
                     document.getElementById('codeToCopy').textContent = 'TEVA555';
                 }
             } catch (error) {
-                console.log('មិនអាចផ្ទុកកូដពី code-content.txt បានទេ');
                 document.getElementById('codeToCopy').textContent = 'TEVA555';
             }
         }
 
-        // ហៅ function ទាំងពីរពេលផ្ទុកទំព័រ
         loadTextContent();
         loadCodeContent();
 
@@ -628,14 +675,12 @@
             const textToCopy = document.getElementById("textToCopy").textContent;
             
             navigator.clipboard.writeText(textToCopy).then(() => {
-                document.getElementById("clickSound").play();
                 const toast = document.getElementById("toast");
                 toast.style.display = "block";
                 setTimeout(() => {
                     toast.style.display = "none";
                 }, 1800);
             }).catch(err => {
-                console.error("មានបញ្ហាក្នុងការ copy អត្ថបទ: ", err);
                 fallbackCopyText(textToCopy, "toast");
             });
         }
@@ -644,14 +689,12 @@
             const codeToCopy = document.getElementById("codeToCopy").textContent;
             
             navigator.clipboard.writeText(codeToCopy).then(() => {
-                document.getElementById("clickSound").play();
                 const toastCode = document.getElementById("toastCode");
                 toastCode.style.display = "block";
                 setTimeout(() => {
                     toastCode.style.display = "none";
                 }, 1800);
             }).catch(err => {
-                console.error("មានបញ្ហាក្នុងការ copy code: ", err);
                 fallbackCopyText(codeToCopy, "toastCode");
             });
         }
@@ -668,18 +711,16 @@
             try {
                 const successful = document.execCommand('copy');
                 if (successful) {
-                    document.getElementById("clickSound").play();
                     const toast = document.getElementById(toastId);
                     toast.style.display = "block";
                     setTimeout(() => {
                         toast.style.display = "none";
                     }, 1800);
                 } else {
-                    alert("មិនអាច copy អត្ថបទបានទេ។ សូមព្យាយាមម្តងទៀត។");
+                    alert("មិនអាចចម្លងអត្ថបទបានទេ។ សូមព្យាយាមម្តងទៀត។");
                 }
             } catch (err) {
-                console.error("មានបញ្ហាក្នុងការ copy: ", err);
-                alert("មិនអាច copy អត្ថបទបានទេ។");
+                alert("មិនអាចចម្លងអត្ថបទបានទេ។");
             }
             
             document.body.removeChild(textArea);
