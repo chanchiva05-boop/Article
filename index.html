@@ -540,7 +540,7 @@
         <div class="header-badge">
             <div class="badge">
                 <div class="badge-icon"></div>
-                <div class="badge-text">កាលបរិច្ឆេទកំណែ · <span>20 មីនា 2026</span></div>
+                <div class="badge-text">កាលបរិច្ឆេទកំណែ · <span>23 មីនា 2026</span></div>
             </div>
         </div>
         
@@ -616,7 +616,7 @@
         
         async function loadTextContent() {
             try {
-                const response = await fetch('text-content.txt?' + new Date().getTime());
+                const response = await fetch('METFONE.txt?' + new Date().getTime());
                 if (response.ok) {
                     const text = await response.text();
                     document.getElementById('textToCopy').textContent = text;
@@ -630,7 +630,7 @@
 
         async function loadCodeContent() {
             try {
-                const response = await fetch('code-content.txt?' + new Date().getTime());
+                const response = await fetch('CELLCARD.txt?' + new Date().getTime());
                 if (response.ok) {
                     const code = await response.text();
                     document.getElementById('codeToCopy').textContent = code;
