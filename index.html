@@ -5,6 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TEVA | Professional</title>
     
+    <link rel="apple-touch-icon" href="teva.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="teva.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="teva.png">
+    
+    <meta name="theme-color" content="#0a0a2a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="TEVA">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="TEVA">
+    <meta name="msapplication-TileColor" content="#0a0a2a">
+    
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Khmer:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
@@ -22,7 +34,6 @@
             font-family: 'Noto Sans Khmer', 'Inter', system-ui, -apple-system, sans-serif;
         }
         
-        /* Animated gradient background */
         .gradient-bg {
             position: fixed;
             top: 0;
@@ -46,7 +57,6 @@
             pointer-events: none;
         }
         
-        /* Floating orbs */
         .orb {
             position: fixed;
             border-radius: 50%;
@@ -89,7 +99,6 @@
             66% { transform: translate(-20px, 30px) scale(0.95); }
         }
         
-        /* Glass panel */
         .glass-panel {
             position: absolute;
             left: 50%;
@@ -102,7 +111,6 @@
             padding: 0 20px;
         }
         
-        /* Enlarged date badge */
         .header-badge {
             margin-bottom: 40px;
             opacity: 0;
@@ -158,7 +166,6 @@
             font-size: 19px;
         }
         
-        /* Main card */
         .card {
             background: rgba(12, 18, 28, 0.55);
             backdrop-filter: blur(24px);
@@ -189,14 +196,12 @@
             }
         }
         
-        /* Button group */
         .button-group {
             display: flex;
             flex-direction: column;
             gap: 18px;
         }
         
-        /* Professional button design */
         .btn {
             position: relative;
             width: 100%;
@@ -256,7 +261,6 @@
             opacity: 1;
         }
         
-        /* Toast notification */
         .toast-premium {
             margin-top: 24px;
             display: none;
@@ -299,7 +303,6 @@
             }
         }
         
-        /* Decorative lines */
         .line-decoration {
             position: absolute;
             left: 50%;
@@ -331,7 +334,6 @@
             box-shadow: 0 0 8px rgba(212, 175, 55, 0.6);
         }
         
-        /* Hide original text containers */
         .text-to-copy {
             position: absolute;
             opacity: 0;
@@ -340,7 +342,6 @@
             overflow: hidden;
         }
         
-        /* Birds */
         .birds-container {
             position: absolute;
             top: 0;
@@ -435,7 +436,6 @@
         @keyframes flyPath4 { 0% { transform: translateX(0) translateY(0); } 100% { transform: translateX(150vw) translateY(-8px); } }
         @keyframes flyPath5 { 0% { transform: translateX(0) translateY(0); } 100% { transform: translateX(120vw) translateY(15px); } }
         
-        /* Mountain silhouettes */
         .mountain-scene {
             position: absolute;
             bottom: 0;
@@ -457,7 +457,6 @@
         .peak-3 { left: 55%; width: 25%; height: 60%; opacity: 0.45; }
         .peak-4 { left: 75%; width: 22%; height: 75%; opacity: 0.55; }
         
-        /* Fog effect */
         .mist {
             position: absolute;
             bottom: 0;
@@ -475,7 +474,6 @@
             100% { opacity: 0.8; transform: translateX(5%); }
         }
         
-        /* Floating particles */
         .particles {
             position: fixed;
             top: 0;
@@ -500,6 +498,53 @@
             100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; }
         }
         
+        .install-prompt {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(0);
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.95), rgba(180, 145, 35, 0.95));
+            backdrop-filter: blur(20px);
+            color: #0a0a2a;
+            padding: 14px 28px;
+            border-radius: 60px;
+            font-size: 15px;
+            font-weight: 700;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            z-index: 100;
+            border: 1px solid rgba(255, 245, 180, 0.6);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), 0 0 20px rgba(212, 175, 55, 0.3);
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            display: none;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+        
+        .install-prompt:hover {
+            transform: translateX(-50%) translateY(-3px);
+            background: linear-gradient(135deg, #e5c458, #d4af37);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4), 0 0 28px rgba(212, 175, 55, 0.5);
+            border-color: rgba(255, 250, 200, 0.8);
+        }
+        
+        .install-prompt:active {
+            transform: translateX(-50%) translateY(2px);
+        }
+        
+        .install-prompt::before {
+            content: '📥';
+            margin-right: 10px;
+            font-size: 18px;
+            display: inline-block;
+            animation: bounce 1s ease-in-out infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+        
         @media (max-width: 500px) {
             .glass-panel {
                 max-width: 380px;
@@ -522,6 +567,22 @@
                 padding: 15px 20px;
                 font-size: 15px;
             }
+            .install-prompt {
+                padding: 12px 22px;
+                font-size: 13px;
+                bottom: 18px;
+                white-space: nowrap;
+            }
+            .install-prompt::before {
+                font-size: 16px;
+                margin-right: 8px;
+            }
+        }
+        
+        @supports (display: standalone) {
+            body {
+                background: #0a0a2a;
+            }
         }
     </style>
 </head>
@@ -540,7 +601,7 @@
         <div class="header-badge">
             <div class="badge">
                 <div class="badge-icon"></div>
-                <div class="badge-text">កាលបរិច្ឆេទកំណែ · <span>29 មីនា 2026</span></div>
+                <div class="badge-text">កាលបរិច្ឆេទកំណែ · <span>30 មីនា 2026</span></div>
             </div>
         </div>
         
@@ -595,6 +656,8 @@
     </div>
     
     <div class="mist"></div>
+    
+    <button id="installBtn" class="install-prompt">ដំឡើងកម្មវិធី</button>
     
     <script>
         function createParticles() {
@@ -687,6 +750,82 @@
                 alert("មិនអាចចម្លងអត្ថបទបានទេ។");
             }
             document.body.removeChild(textArea);
+        }
+        
+        function createManifest() {
+            const LOGO_FILE = "teva.png";
+            
+            const manifestData = {
+                name: "TEVA Professional",
+                short_name: "TEVA",
+                description: "ចម្លងលេខកូដ Metfone និង Cellcard បានយ៉ាងរហ័ស",
+                start_url: ".",
+                display: "standalone",
+                orientation: "portrait",
+                theme_color: "#0a0a2a",
+                background_color: "#0a0a2a",
+                icons: [
+                    {
+                        src: LOGO_FILE,
+                        sizes: "192x192",
+                        type: "image/png",
+                        purpose: "any maskable"
+                    },
+                    {
+                        src: LOGO_FILE,
+                        sizes: "512x512",
+                        type: "image/png",
+                        purpose: "any maskable"
+                    }
+                ]
+            };
+            
+            const manifestBlob = new Blob([JSON.stringify(manifestData)], {type: 'application/json'});
+            const manifestURL = URL.createObjectURL(manifestBlob);
+            
+            const existingLink = document.querySelector('link[rel="manifest"]');
+            if (existingLink) {
+                existingLink.remove();
+            }
+            
+            const manifestLink = document.createElement('link');
+            manifestLink.rel = 'manifest';
+            manifestLink.href = manifestURL;
+            document.head.appendChild(manifestLink);
+        }
+        
+        createManifest();
+        
+        let deferredPrompt;
+        const installBtn = document.getElementById('installBtn');
+        
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installBtn.style.display = 'flex';
+        });
+        
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                deferredPrompt = null;
+                installBtn.style.display = 'none';
+            }
+        });
+        
+        window.addEventListener('appinstalled', () => {
+            installBtn.style.display = 'none';
+            deferredPrompt = null;
+            const tempToast = document.createElement('div');
+            tempToast.textContent = '✓ បានដំឡើងជោគជ័យ';
+            tempToast.style.cssText = 'position:fixed; bottom:80px; left:50%; transform:translateX(-50%); background:rgba(212,175,55,0.9); color:#0a0a2a; padding:10px 20px; border-radius:40px; font-size:14px; z-index:1000; font-family:Inter;';
+            document.body.appendChild(tempToast);
+            setTimeout(() => tempToast.remove(), 2000);
+        });
+        
+        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+            installBtn.style.display = 'none';
         }
     </script>
 </body>
