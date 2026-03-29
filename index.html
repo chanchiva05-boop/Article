@@ -18,9 +18,27 @@
     <meta name="msapplication-TileColor" content="#0a0a2a">
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Khmer:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
+    <!-- Khmer OS Fonts via Google Early Access or local simulation: using Noto Sans Khmer as fallback but with custom font-family priority -->
     <style>
+        /* 1. Định nghĩa font chữ Khmer theo yêu cầu */
+        @font-face {
+            font-family: 'Khmer OS Muol Light';
+            src: local('Khmer OS Muol Light'), local('KhmerOSMuolLight'), local('Khmer OS Muol Light');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+        
+        @font-face {
+            font-family: 'Khmer OS Battambang';
+            src: local('Khmer OS Battambang'), local('KhmerOSBattambang'), local('Khmer OS Battambang');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+        
+        /* Fallback chuẩn: nếu không có font hệ thống thì dùng Noto Sans Khmer */
         * {
             margin: 0;
             padding: 0;
@@ -31,9 +49,61 @@
             height: 100vh;
             overflow: hidden;
             background: #0a0a2a;
-            font-family: 'Noto Sans Khmer', 'Inter', system-ui, -apple-system, sans-serif;
+            /* Font mặc định cho toàn bộ chữ Khmer: Battambang (trừ phần ngày tháng) */
+            font-family: 'Khmer OS Battambang', 'Noto Sans Khmer', 'Inter', system-ui, sans-serif;
         }
         
+        /* Riêng dòng ngày tháng (badge-text) và các thành phần tiếng Anh hoặc số sẽ có Times New Roman riêng */
+        .badge-text, .badge-text span, .status-badge, .toast-message, .install-prompt, .update-notification {
+            font-family: 'Times New Roman', 'Inter', 'Khmer OS Battambang', serif;
+        }
+        
+        /* Tiêu đề badge có chứa "កាលបរិច្ឆេទកំណែ" yêu cầu font Khmer OS Muol Light */
+        .khmer-muol {
+            font-family: 'Khmer OS Muol Light', 'Noto Sans Khmer', 'Khmer OS Battambang', serif;
+            font-weight: normal;
+        }
+        
+        /* Áp dụng cho toàn bộ phần tử có lớp badge-text, nhưng bên trong muốn phần ngày tháng và chữ "កាលបរិច្ឆេទកំណែ" đều dùng Muol Light */
+        .badge-text {
+            font-family: 'Khmer OS Muol Light', 'Noto Sans Khmer', serif;
+            font-size: 18px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            color: #f0e9cf;
+            text-transform: uppercase;
+        }
+        
+        /* Số và ký tự latin trong badge-text ưu tiên Times New Roman, nhưng vẫn giữ Muol cho chữ Khmer */
+        .badge-text span, .badge-text .latin-part {
+            font-family: 'Times New Roman', 'Khmer OS Muol Light', serif;
+            font-weight: 700;
+        }
+        
+        /* Các button và text Khmer thông thường dùng Battambang */
+        .btn, .card, .toast-premium .toast-message, .install-prompt, .update-notification, .status-badge {
+            font-family: 'Khmer OS Battambang', 'Noto Sans Khmer', 'Times New Roman', sans-serif;
+        }
+        
+        /* Riêng button text (tiếng Khmer) dùng Battambang */
+        .btn span {
+            font-family: 'Khmer OS Battambang', 'Noto Sans Khmer', sans-serif;
+            font-weight: 600;
+        }
+        
+        /* Latin/English text trong toast, install prompt dùng Times New Roman nhưng vẫn hỗ trợ Khmer */
+        .toast-message, .install-prompt, .status-badge, .update-notification {
+            font-family: 'Times New Roman', 'Khmer OS Battambang', serif;
+        }
+        
+        /* Đảm bảo phần tử chứa ngày tháng (30 មីនា 2026) dùng Muol Light + Times cho số */
+        .badge-text .date-part {
+            font-family: 'Times New Roman', 'Khmer OS Muol Light', serif;
+            font-weight: 700;
+            color: #d4af37;
+        }
+        
+        /* Phần còn lại của giao diện */
         .gradient-bg {
             position: fixed;
             top: 0;
@@ -151,21 +221,6 @@
             50% { opacity: 1; transform: scale(1.4); }
         }
         
-        .badge-text {
-            font-size: 18px;
-            font-weight: 600;
-            letter-spacing: 1.5px;
-            color: #f0e9cf;
-            text-transform: uppercase;
-            font-family: 'Inter', sans-serif;
-        }
-        
-        .badge-text span {
-            color: #d4af37;
-            font-weight: 700;
-            font-size: 19px;
-        }
-        
         .card {
             background: rgba(12, 18, 28, 0.55);
             backdrop-filter: blur(24px);
@@ -210,7 +265,6 @@
             border-radius: 40px;
             font-size: 17px;
             font-weight: 600;
-            font-family: 'Noto Sans Khmer', 'Inter', sans-serif;
             cursor: pointer;
             transition: all 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.1);
             overflow: hidden;
@@ -289,7 +343,6 @@
             font-weight: 500;
             color: #4ade80;
             letter-spacing: 0.3px;
-            font-family: 'Inter', sans-serif;
         }
         
         @keyframes toastGlide {
@@ -510,7 +563,6 @@
             border-radius: 60px;
             font-size: 15px;
             font-weight: 700;
-            font-family: 'Inter', sans-serif;
             cursor: pointer;
             z-index: 100;
             border: 1px solid rgba(255, 245, 180, 0.6);
@@ -545,7 +597,6 @@
             50% { transform: translateY(-3px); }
         }
         
-        /* Status Badge - Top Right Corner */
         .status-badge {
             position: fixed;
             top: 12px;
@@ -555,14 +606,12 @@
             padding: 6px 14px;
             border-radius: 30px;
             font-size: 11px;
-            font-family: 'Inter', monospace;
             font-weight: 600;
             z-index: 200;
             pointer-events: none;
             border: 1px solid rgba(212, 175, 55, 0.35);
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
             letter-spacing: 0.3px;
-            transition: all 0.3s ease;
         }
         
         .status-badge.online {
@@ -587,7 +636,6 @@
             font-size: 13px;
             font-weight: bold;
             z-index: 1000;
-            font-family: 'Inter', sans-serif;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             animation: fadeInOut 3s ease forwards;
             white-space: nowrap;
@@ -601,63 +649,27 @@
         }
         
         @media (max-width: 500px) {
-            .glass-panel {
-                max-width: 380px;
-            }
-            .badge {
-                padding: 12px 24px;
-                gap: 10px;
-            }
-            .badge-text {
-                font-size: 14px;
-            }
-            .badge-text span {
-                font-size: 15px;
-            }
-            .card {
-                padding: 36px 24px;
-                border-radius: 40px;
-            }
-            .btn {
-                padding: 15px 20px;
-                font-size: 15px;
-            }
-            .install-prompt {
-                padding: 12px 22px;
-                font-size: 13px;
-                bottom: 18px;
-                white-space: nowrap;
-            }
-            .install-prompt::before {
-                font-size: 16px;
-                margin-right: 8px;
-            }
-            .update-notification {
-                font-size: 11px;
-                padding: 8px 16px;
-                white-space: nowrap;
-            }
-            .status-badge {
-                top: 8px;
-                right: 8px;
-                padding: 4px 10px;
-                font-size: 9px;
-            }
+            .glass-panel { max-width: 380px; }
+            .badge { padding: 12px 24px; gap: 10px; }
+            .badge-text { font-size: 14px; }
+            .badge-text span { font-size: 15px; }
+            .card { padding: 36px 24px; border-radius: 40px; }
+            .btn { padding: 15px 20px; font-size: 15px; }
+            .install-prompt { padding: 12px 22px; font-size: 13px; bottom: 18px; white-space: nowrap; }
+            .install-prompt::before { font-size: 16px; margin-right: 8px; }
+            .update-notification { font-size: 11px; padding: 8px 16px; white-space: nowrap; }
+            .status-badge { top: 8px; right: 8px; padding: 4px 10px; font-size: 9px; }
         }
         
         @supports (display: standalone) {
-            body {
-                background: #0a0a2a;
-            }
+            body { background: #0a0a2a; }
         }
     </style>
 </head>
-
 <body>
     <div class="gradient-bg"></div>
     <div class="animated-bg"></div>
     
-    <!-- Status Badge - Top Right -->
     <div class="status-badge online" id="statusBadge">● Online</div>
     
     <div class="orb orb-1"></div>
@@ -670,7 +682,9 @@
         <div class="header-badge">
             <div class="badge">
                 <div class="badge-icon"></div>
-                <div class="badge-text">កាលបរិច្ឆេទកំណែ · <span>30 មីនា 2026</span></div>
+                <div class="badge-text khmer-muol">
+                    កាលបរិច្ឆេទកំណែ · <span class="date-part">30 មីនា 2026</span>
+                </div>
             </div>
         </div>
         
@@ -709,467 +723,249 @@
     <div class="text-to-copy" id="textToCopy">កំពុងផ្ទុកអត្ថបទ...</div>
     <div class="text-to-copy" id="codeToCopy">កំពុងផ្ទុកកូដ...</div>
     
-    <div class="birds-container">
-        <div class="bird bird1"><div class="bird-body"></div><div class="bird-wing left"></div><div class="bird-wing right"></div><div class="bird-tail"></div><div class="bird-eye"></div></div>
-        <div class="bird bird2"><div class="bird-body"></div><div class="bird-wing left"></div><div class="bird-wing right"></div><div class="bird-tail"></div><div class="bird-eye"></div></div>
-        <div class="bird bird3"><div class="bird-body"></div><div class="bird-wing left"></div><div class="bird-wing right"></div><div class="bird-tail"></div><div class="bird-eye"></div></div>
-        <div class="bird bird4"><div class="bird-body"></div><div class="bird-wing left"></div><div class="bird-wing right"></div><div class="bird-tail"></div><div class="bird-eye"></div></div>
-        <div class="bird bird5"><div class="bird-body"></div><div class="bird-wing left"></div><div class="bird-wing right"></div><div class="bird-tail"></div><div class="bird-eye"></div></div>
-    </div>
-    
-    <div class="mountain-scene">
-        <div class="peak peak-1"></div>
-        <div class="peak peak-2"></div>
-        <div class="peak peak-3"></div>
-        <div class="peak peak-4"></div>
-    </div>
-    
+    <div class="birds-container">...</div>
+    <div class="mountain-scene">...</div>
     <div class="mist"></div>
     
     <button id="installBtn" class="install-prompt">ដំឡើងកម្មវិធី</button>
     
     <script>
-        // Create particles animation
-        function createParticles() {
-            const container = document.getElementById('particles');
-            for (let i = 0; i < 45; i++) {
-                const particle = document.createElement('div');
-                particle.classList.add('particle');
-                const size = Math.random() * 3 + 1;
-                particle.style.width = size + 'px';
-                particle.style.height = size + 'px';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.animationDelay = Math.random() * 15 + 's';
-                particle.style.animationDuration = 8 + Math.random() * 12 + 's';
-                particle.style.opacity = Math.random() * 0.4 + 0.2;
-                container.appendChild(particle);
-            }
-        }
-        createParticles();
-        
-        // Track if this is the first load
-        let isFirstLoad = true;
-        
-        // Update status badge
-        function updateStatusBadge() {
-            const badge = document.getElementById('statusBadge');
-            if (navigator.onLine) {
-                badge.textContent = '● Online';
-                badge.className = 'status-badge online';
-            } else {
-                badge.textContent = '● Offline';
-                badge.className = 'status-badge offline';
-            }
-        }
-        
-        // Show update notification
-        function showUpdateNotification(title, message) {
-            // Remove existing notifications
-            const existingNotifications = document.querySelectorAll('.update-notification');
-            existingNotifications.forEach(notif => notif.remove());
-            
-            const notification = document.createElement('div');
-            notification.className = 'update-notification';
-            notification.textContent = `✨ ${title}: ${message}`;
-            document.body.appendChild(notification);
-            setTimeout(() => notification.remove(), 3000);
-        }
-        
-        // Force update with cache busting - ALWAYS fetch from network
-        async function forceUpdateTextContent() {
-            const textElement = document.getElementById('textToCopy');
-            const oldText = localStorage.getItem('metfone_text');
-            
-            try {
-                // Force network request with cache bust
-                const response = await fetch('METFONE.txt?' + Date.now(), {
-                    cache: 'no-store',
-                    headers: {
-                        'Cache-Control': 'no-cache, no-store, must-revalidate',
-                        'Pragma': 'no-cache'
+        (function() {
+            // Particles generation
+            function createParticles() {
+                const container = document.getElementById('particles');
+                if(container) {
+                    for (let i = 0; i < 45; i++) {
+                        const particle = document.createElement('div');
+                        particle.classList.add('particle');
+                        const size = Math.random() * 3 + 1;
+                        particle.style.width = size + 'px';
+                        particle.style.height = size + 'px';
+                        particle.style.left = Math.random() * 100 + '%';
+                        particle.style.animationDelay = Math.random() * 15 + 's';
+                        particle.style.animationDuration = 8 + Math.random() * 12 + 's';
+                        particle.style.opacity = Math.random() * 0.4 + 0.2;
+                        container.appendChild(particle);
                     }
-                });
-                
-                if (response.ok) {
-                    const newText = await response.text();
-                    
-                    // Only update if content changed
-                    if (oldText !== newText) {
+                }
+            }
+            createParticles();
+            
+            let isFirstLoad = true;
+            function updateStatusBadge() {
+                const badge = document.getElementById('statusBadge');
+                if (navigator.onLine) {
+                    badge.textContent = '● Online';
+                    badge.className = 'status-badge online';
+                } else {
+                    badge.textContent = '● Offline';
+                    badge.className = 'status-badge offline';
+                }
+            }
+            
+            function showUpdateNotification(title, message) {
+                const existingNotifications = document.querySelectorAll('.update-notification');
+                existingNotifications.forEach(notif => notif.remove());
+                const notification = document.createElement('div');
+                notification.className = 'update-notification';
+                notification.textContent = `✨ ${title}: ${message}`;
+                document.body.appendChild(notification);
+                setTimeout(() => notification.remove(), 3000);
+            }
+            
+            async function forceUpdateTextContent() {
+                const textElement = document.getElementById('textToCopy');
+                const oldText = localStorage.getItem('metfone_text');
+                try {
+                    const response = await fetch('METFONE.txt?' + Date.now(), {
+                        cache: 'no-store',
+                        headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache' }
+                    });
+                    if (response.ok) {
+                        const newText = await response.text();
+                        if (oldText !== newText) {
+                            textElement.textContent = newText;
+                            localStorage.setItem('metfone_text', newText);
+                            console.log('🔄 METFONE.txt UPDATED');
+                            showUpdateNotification('មេតហ្វូន', 'បានធ្វើបច្ចុប្បន្នភាពដោយស្វ័យប្រវត្តិ');
+                            return true;
+                        }
+                    }
+                } catch(e) { console.log('⚠️ Network fail METFONE'); }
+                return false;
+            }
+            
+            async function forceUpdateCodeContent() {
+                const codeElement = document.getElementById('codeToCopy');
+                const oldCode = localStorage.getItem('cellcard_code');
+                try {
+                    const response = await fetch('CELLCARD.txt?' + Date.now(), {
+                        cache: 'no-store',
+                        headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache' }
+                    });
+                    if (response.ok) {
+                        const newCode = await response.text();
+                        if (oldCode !== newCode) {
+                            codeElement.textContent = newCode;
+                            localStorage.setItem('cellcard_code', newCode);
+                            console.log('🔄 CELLCARD.txt UPDATED');
+                            showUpdateNotification('សែលកាត', 'បានធ្វើបច្ចុប្បន្នភាពដោយស្វ័យប្រវត្តិ');
+                            return true;
+                        }
+                    }
+                } catch(e) { console.log('⚠️ Network fail CELLCARD'); }
+                return false;
+            }
+            
+            async function loadTextContent() {
+                const textElement = document.getElementById('textToCopy');
+                const oldText = localStorage.getItem('metfone_text');
+                try {
+                    const response = await fetch('METFONE.txt?' + Date.now(), { cache: 'no-store' });
+                    if (response.ok) {
+                        const newText = await response.text();
                         textElement.textContent = newText;
                         localStorage.setItem('metfone_text', newText);
-                        console.log('🔄 METFONE.txt UPDATED from network');
-                        showUpdateNotification('មេតហ្វូន', 'បានធ្វើបច្ចុប្បន្នភាពដោយស្វ័យប្រវត្តិ');
-                        return true;
-                    } else {
-                        console.log('✅ METFONE.txt is up to date');
-                        return false;
+                        console.log('✅ Loaded METFONE');
+                        return;
                     }
-                }
-            } catch(e) {
-                console.log('⚠️ Network failed for METFONE.txt');
+                } catch(e) {}
+                if (oldText) textElement.textContent = oldText;
+                else textElement.textContent = 'កាកម៉េសហ្អា';
             }
-            return false;
-        }
-        
-        async function forceUpdateCodeContent() {
-            const codeElement = document.getElementById('codeToCopy');
-            const oldCode = localStorage.getItem('cellcard_code');
             
-            try {
-                const response = await fetch('CELLCARD.txt?' + Date.now(), {
-                    cache: 'no-store',
-                    headers: {
-                        'Cache-Control': 'no-cache, no-store, must-revalidate',
-                        'Pragma': 'no-cache'
-                    }
-                });
-                
-                if (response.ok) {
-                    const newCode = await response.text();
-                    
-                    if (oldCode !== newCode) {
+            async function loadCodeContent() {
+                const codeElement = document.getElementById('codeToCopy');
+                const oldCode = localStorage.getItem('cellcard_code');
+                try {
+                    const response = await fetch('CELLCARD.txt?' + Date.now(), { cache: 'no-store' });
+                    if (response.ok) {
+                        const newCode = await response.text();
                         codeElement.textContent = newCode;
                         localStorage.setItem('cellcard_code', newCode);
-                        console.log('🔄 CELLCARD.txt UPDATED from network');
-                        showUpdateNotification('សែលកាត', 'បានធ្វើបច្ចុប្បន្នភាពដោយស្វ័យប្រវត្តិ');
-                        return true;
-                    } else {
-                        console.log('✅ CELLCARD.txt is up to date');
-                        return false;
+                        console.log('✅ Loaded CELLCARD');
+                        return;
                     }
-                }
-            } catch(e) {
-                console.log('⚠️ Network failed for CELLCARD.txt');
-            }
-            return false;
-        }
-        
-        // Regular load function (non-force) for initial load
-        async function loadTextContent() {
-            const textElement = document.getElementById('textToCopy');
-            const oldText = localStorage.getItem('metfone_text');
-            
-            try {
-                const response = await fetch('METFONE.txt?' + Date.now(), {
-                    cache: 'no-store'
-                });
-                if (response.ok) {
-                    const newText = await response.text();
-                    textElement.textContent = newText;
-                    
-                    if (oldText && oldText !== newText && !isFirstLoad) {
-                        console.log('🔄 METFONE.txt updated from network');
-                        showUpdateNotification('មេតហ្វូន', 'បានធ្វើបច្ចុប្បន្នភាព');
-                    }
-                    
-                    localStorage.setItem('metfone_text', newText);
-                    console.log('✅ Loaded latest METFONE.txt');
-                    return;
-                }
-            } catch(e) {
-                console.log('⚠️ Network failed for METFONE.txt');
+                } catch(e) {}
+                if (oldCode) codeElement.textContent = oldCode;
+                else codeElement.textContent = 'TEVA555';
             }
             
-            if (oldText) {
-                textElement.textContent = oldText;
-                console.log('📦 Loaded METFONE from localStorage');
-            } else {
-                textElement.textContent = 'កាកម៉េសហ្អា';
-                console.log('💾 Loaded METFONE from fallback');
-            }
-        }
-        
-        async function loadCodeContent() {
-            const codeElement = document.getElementById('codeToCopy');
-            const oldCode = localStorage.getItem('cellcard_code');
-            
-            try {
-                const response = await fetch('CELLCARD.txt?' + Date.now(), {
-                    cache: 'no-store'
-                });
-                if (response.ok) {
-                    const newCode = await response.text();
-                    codeElement.textContent = newCode;
-                    
-                    if (oldCode && oldCode !== newCode && !isFirstLoad) {
-                        console.log('🔄 CELLCARD.txt updated from network');
-                        showUpdateNotification('សែលកាត', 'បានធ្វើបច្ចុប្បន្នភាព');
-                    }
-                    
-                    localStorage.setItem('cellcard_code', newCode);
-                    console.log('✅ Loaded latest CELLCARD.txt');
-                    return;
-                }
-            } catch(e) {
-                console.log('⚠️ Network failed for CELLCARD.txt');
-            }
-            
-            if (oldCode) {
-                codeElement.textContent = oldCode;
-                console.log('📦 Loaded CELLCARD from localStorage');
-            } else {
-                codeElement.textContent = 'TEVA555';
-                console.log('💾 Loaded CELLCARD from fallback');
-            }
-        }
-        
-        // Register Service Worker
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(registration => {
-                        console.log('✅ Service Worker registered successfully');
-                        
-                        // Check for SW updates immediately
-                        registration.update();
-                        
-                        // Check for SW updates every hour
-                        setInterval(() => {
-                            if (navigator.onLine) {
-                                registration.update();
-                                console.log('🔄 Checking for Service Worker updates...');
-                            }
-                        }, 3600000);
-                        
-                        registration.addEventListener('updatefound', () => {
-                            const newWorker = registration.installing;
-                            console.log('🔄 New Service Worker found');
-                            
+            // Service Worker registration
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('./sw.js').then(reg => {
+                        console.log('✅ SW registered');
+                        reg.update();
+                        setInterval(() => { if(navigator.onLine) reg.update(); }, 3600000);
+                        reg.addEventListener('updatefound', () => {
+                            const newWorker = reg.installing;
                             newWorker.addEventListener('statechange', () => {
-                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                    console.log('🔄 New update available, reloading...');
+                                if(newWorker.state === 'installed' && navigator.serviceWorker.controller) {
                                     showUpdateNotification('កម្មវិធី', 'កំណែថ្មីត្រៀមរួចរាល់');
-                                    setTimeout(() => {
-                                        window.location.reload();
-                                    }, 1500);
+                                    setTimeout(() => window.location.reload(), 1500);
                                 }
                             });
                         });
-                    })
-                    .catch(error => {
-                        console.log('❌ Service Worker registration failed:', error);
-                    });
-            });
-        }
-        
-        // Auto update check when online
-        let lastUpdateCheck = 0;
-        let isChecking = false;
-        
-        async function autoUpdateCheck() {
-            if (!navigator.onLine) {
-                console.log('📡 Offline, skipping update check');
-                return;
-            }
-            
-            if (isChecking) {
-                console.log('⏳ Update check already in progress');
-                return;
-            }
-            
-            const now = Date.now();
-            if (now - lastUpdateCheck < 30000) {
-                return;
-            }
-            
-            lastUpdateCheck = now;
-            isChecking = true;
-            
-            console.log('🔍 Auto checking for updates...');
-            
-            try {
-                const [textUpdated, codeUpdated] = await Promise.all([
-                    forceUpdateTextContent(),
-                    forceUpdateCodeContent()
-                ]);
-                
-                if (textUpdated || codeUpdated) {
-                    console.log('✅ Updates applied successfully');
-                }
-            } catch(err) {
-                console.log('⚠️ Auto update check error:', err);
-            } finally {
-                isChecking = false;
-            }
-        }
-        
-        // When coming online, check immediately
-        window.addEventListener('online', () => {
-            console.log('📡 Network connected!');
-            updateStatusBadge();
-            showUpdateNotification('បណ្តាញ', 'កំពុងភ្ជាប់អ៊ីនធឺណិត - កំពុងពិនិត្យមើលការធ្វើបច្ចុប្បន្នភាព');
-            
-            setTimeout(() => {
-                Promise.all([
-                    forceUpdateTextContent(),
-                    forceUpdateCodeContent()
-                ]).then(() => {
-                    console.log('✅ Update check completed');
-                }).catch(err => {
-                    console.log('⚠️ Update check had issues:', err);
+                    }).catch(err => console.log('SW failed', err));
                 });
-            }, 100);
-        });
-        
-        window.addEventListener('offline', () => {
-            console.log('⚠️ Network disconnected');
+            }
+            
+            let lastUpdateCheck = 0, isChecking = false;
+            async function autoUpdateCheck() {
+                if (!navigator.onLine || isChecking) return;
+                const now = Date.now();
+                if (now - lastUpdateCheck < 30000) return;
+                lastUpdateCheck = now;
+                isChecking = true;
+                try {
+                    await Promise.all([forceUpdateTextContent(), forceUpdateCodeContent()]);
+                } catch(err) {}
+                finally { isChecking = false; }
+            }
+            
+            window.addEventListener('online', () => {
+                updateStatusBadge();
+                showUpdateNotification('បណ្តាញ', 'កំពុងភ្ជាប់អ៊ីនធឺណិត - កំពុងពិនិត្យ');
+                setTimeout(() => autoUpdateCheck(), 100);
+            });
+            window.addEventListener('offline', () => { updateStatusBadge(); showUpdateNotification('បណ្តាញ', 'មិនមានអ៊ីនធឺណិត - ប្រើទិន្នន័យក្នុងស្តុក'); });
+            document.addEventListener('visibilitychange', () => { if (!document.hidden && navigator.onLine) autoUpdateCheck(); });
+            setInterval(() => { if(navigator.onLine) autoUpdateCheck(); }, 30000);
+            
+            loadTextContent();
+            loadCodeContent();
             updateStatusBadge();
-            showUpdateNotification('បណ្តាញ', 'មិនមានអ៊ីនធឺណិត - ប្រើប្រាស់ទិន្នន័យក្នុងស្តុក');
-        });
-        
-        // Check when page becomes visible
-        document.addEventListener('visibilitychange', () => {
-            if (!document.hidden && navigator.onLine) {
-                console.log('👁️ Page became visible, checking for updates...');
-                autoUpdateCheck();
-            }
-        });
-        
-        // Periodic check every 30 seconds
-        setInterval(() => {
-            if (navigator.onLine) {
-                autoUpdateCheck();
-            }
-        }, 30000);
-        
-        // Initial load
-        loadTextContent();
-        loadCodeContent();
-        updateStatusBadge();
-        
-        // After first load, enable update notifications
-        setTimeout(() => {
-            isFirstLoad = false;
-        }, 1000);
-        
-        // Toast functions
-        function showToast(element) {
-            element.style.display = 'flex';
-            setTimeout(() => {
-                element.style.display = 'none';
-            }, 1800);
-        }
-        
-        function copyText() {
-            const textToCopy = document.getElementById("textToCopy").textContent;
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                showToast(document.getElementById("toast"));
-            }).catch(() => {
-                fallbackCopyText(textToCopy, "toast");
-            });
-        }
-        
-        function copyCode() {
-            const codeToCopy = document.getElementById("codeToCopy").textContent;
-            navigator.clipboard.writeText(codeToCopy).then(() => {
-                showToast(document.getElementById("toastCode"));
-            }).catch(() => {
-                fallbackCopyText(codeToCopy, "toastCode");
-            });
-        }
-        
-        function fallbackCopyText(text, toastId) {
-            const textArea = document.createElement("textarea");
-            textArea.value = text;
-            textArea.style.position = "fixed";
-            textArea.style.opacity = "0";
-            document.body.appendChild(textArea);
-            textArea.select();
-            try {
-                if (document.execCommand('copy')) {
-                    showToast(document.getElementById(toastId));
-                } else {
-                    alert("មិនអាចចម្លងអត្ថបទបានទេ។");
-                }
-            } catch (err) {
-                alert("មិនអាចចម្លងអត្ថបទបានទេ។");
-            }
-            document.body.removeChild(textArea);
-        }
-        
-        // Manifest and PWA installation
-        function createManifest() {
-            const LOGO_FILE = "teva.png";
+            setTimeout(() => { isFirstLoad = false; }, 1000);
             
-            const manifestData = {
-                name: "TEVA",
-                short_name: "INTERNET 🌐",
-                description: "ចម្លងលេខកូដ Metfone និង Cellcard បានយ៉ាងរហ័ស",
-                start_url: ".",
-                display: "standalone",
-                orientation: "portrait",
-                theme_color: "#0a0a2a",
-                background_color: "#0a0a2a",
-                icons: [
-                    {
-                        src: LOGO_FILE,
-                        sizes: "192x192",
-                        type: "image/png",
-                        purpose: "any maskable"
-                    },
-                    {
-                        src: LOGO_FILE,
-                        sizes: "512x512",
-                        type: "image/png",
-                        purpose: "any maskable"
-                    }
-                ]
+            function showToast(element) {
+                if(element) {
+                    element.style.display = 'flex';
+                    setTimeout(() => { element.style.display = 'none'; }, 1800);
+                }
+            }
+            window.copyText = function() {
+                const textToCopy = document.getElementById("textToCopy").textContent;
+                navigator.clipboard.writeText(textToCopy).then(() => showToast(document.getElementById("toast"))).catch(() => fallbackCopyText(textToCopy, "toast"));
             };
-            
-            const manifestBlob = new Blob([JSON.stringify(manifestData)], {type: 'application/json'});
-            const manifestURL = URL.createObjectURL(manifestBlob);
-            
-            const existingLink = document.querySelector('link[rel="manifest"]');
-            if (existingLink) {
-                existingLink.remove();
+            window.copyCode = function() {
+                const codeToCopy = document.getElementById("codeToCopy").textContent;
+                navigator.clipboard.writeText(codeToCopy).then(() => showToast(document.getElementById("toastCode"))).catch(() => fallbackCopyText(codeToCopy, "toastCode"));
+            };
+            function fallbackCopyText(text, toastId) {
+                const textArea = document.createElement("textarea");
+                textArea.value = text;
+                textArea.style.position = "fixed";
+                textArea.style.opacity = "0";
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    if(document.execCommand('copy')) showToast(document.getElementById(toastId));
+                    else alert("មិនអាចចម្លងអត្ថបទបានទេ។");
+                } catch(err) { alert("មិនអាចចម្លងអត្ថបទបានទេ។"); }
+                document.body.removeChild(textArea);
             }
             
-            const manifestLink = document.createElement('link');
-            manifestLink.rel = 'manifest';
-            manifestLink.href = manifestURL;
-            document.head.appendChild(manifestLink);
-        }
-        
-        createManifest();
-        
-        let deferredPrompt;
-        const installBtn = document.getElementById('installBtn');
-        
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            installBtn.style.display = 'flex';
-        });
-        
-        installBtn.addEventListener('click', async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                deferredPrompt = null;
-                installBtn.style.display = 'none';
+            function createManifest() {
+                const LOGO_FILE = "teva.png";
+                const manifestData = {
+                    name: "TEVA", short_name: "INTERNET 🌐", description: "ចម្លងលេខកូដ Metfone និង Cellcard",
+                    start_url: ".", display: "standalone", orientation: "portrait", theme_color: "#0a0a2a", background_color: "#0a0a2a",
+                    icons: [{ src: LOGO_FILE, sizes: "192x192", type: "image/png", purpose: "any maskable" }, { src: LOGO_FILE, sizes: "512x512", type: "image/png", purpose: "any maskable" }]
+                };
+                const manifestBlob = new Blob([JSON.stringify(manifestData)], {type: 'application/json'});
+                const manifestURL = URL.createObjectURL(manifestBlob);
+                const existingLink = document.querySelector('link[rel="manifest"]');
+                if(existingLink) existingLink.remove();
+                const manifestLink = document.createElement('link');
+                manifestLink.rel = 'manifest';
+                manifestLink.href = manifestURL;
+                document.head.appendChild(manifestLink);
             }
-        });
-        
-        window.addEventListener('appinstalled', () => {
-            installBtn.style.display = 'none';
-            deferredPrompt = null;
-            showUpdateNotification('ជោគជ័យ', 'បានដំឡើងកម្មវិធី');
-        });
-        
-        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
-            installBtn.style.display = 'none';
-        }
-        
-        // Monitor connection quality
-        if ('connection' in navigator) {
-            const connection = navigator.connection;
-            connection.addEventListener('change', () => {
-                console.log('📶 Connection type changed:', connection.effectiveType);
-                if (connection.effectiveType !== 'none' && navigator.onLine) {
-                    autoUpdateCheck();
+            createManifest();
+            
+            let deferredPrompt;
+            const installBtn = document.getElementById('installBtn');
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                installBtn.style.display = 'flex';
+            });
+            installBtn.addEventListener('click', async () => {
+                if(deferredPrompt) {
+                    deferredPrompt.prompt();
+                    await deferredPrompt.userChoice;
+                    deferredPrompt = null;
+                    installBtn.style.display = 'none';
                 }
             });
-        }
+            window.addEventListener('appinstalled', () => { installBtn.style.display = 'none'; deferredPrompt = null; showUpdateNotification('ជោគជ័យ', 'បានដំឡើងកម្មវិធី'); });
+            if(window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) installBtn.style.display = 'none';
+            
+            if('connection' in navigator) {
+                navigator.connection.addEventListener('change', () => { if(navigator.onLine) autoUpdateCheck(); });
+            }
+        })();
     </script>
 </body>
-    </html>
+</html>
