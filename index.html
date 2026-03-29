@@ -586,6 +586,28 @@
             100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
         }
         
+        /* Connection status indicator */
+        .online-indicator {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            z-index: 200;
+            transition: all 0.3s ease;
+        }
+        
+        .online-indicator.online {
+            background: #4ade80;
+            box-shadow: 0 0 8px #4ade80;
+        }
+        
+        .online-indicator.offline {
+            background: #fbbf24;
+            box-shadow: 0 0 8px #fbbf24;
+        }
+        
         @media (max-width: 500px) {
             .glass-panel {
                 max-width: 380px;
@@ -643,6 +665,7 @@
     <div class="gradient-bg"></div>
     <div class="animated-bg"></div>
     
+    <div class="online-indicator" id="onlineIndicator"></div>
     <div class="status-badge" id="statusBadge">● Online</div>
     
     <div class="orb orb-1"></div>
@@ -732,38 +755,132 @@
         }
         createParticles();
         
+        // Track if this is the first load
+        let isFirstLoad = true;
+        
         // Update online/offline status
         function updateStatus() {
             const badge = document.getElementById('statusBadge');
+            const indicator = document.getElementById('onlineIndicator');
+            
             if (navigator.onLine) {
                 badge.textContent = '● Online';
                 badge.style.color = '#4ade80';
+                if (indicator) {
+                    indicator.className = 'online-indicator online';
+                }
             } else {
                 badge.textContent = '● Offline (Cached)';
                 badge.style.color = '#fbbf24';
+                if (indicator) {
+                    indicator.className = 'online-indicator offline';
+                }
             }
         }
         
-        window.addEventListener('online', updateStatus);
-        window.addEventListener('offline', updateStatus);
+        window.addEventListener('online', () => {
+            console.log('📡 Network connected!');
+            updateStatus();
+            
+            // Immediately check for updates when coming online
+            console.log('🔄 Checking for updates immediately...');
+            showUpdateNotification('បណ្តាញ', 'កំពុងភ្ជាប់អ៊ីនធឺណិត - កំពុងពិនិត្យមើលការធ្វើបច្ចុប្បន្នភាព');
+            
+            // Force immediate update check with cache bust
+            Promise.all([
+                forceUpdateTextContent(),
+                forceUpdateCodeContent()
+            ]).then(() => {
+                console.log('✅ Update check completed');
+                showUpdateNotification('បច្ចុប្បន្នភាព', 'ទិន្នន័យបានធ្វើបច្ចុប្បន្នភាព');
+            }).catch(err => {
+                console.log('⚠️ Update check had issues:', err);
+            });
+        });
+        
+        window.addEventListener('offline', () => {
+            console.log('⚠️ Network disconnected');
+            updateStatus();
+            showUpdateNotification('បណ្តាញ', 'មិនមានអ៊ីនធឺណិត - ប្រើប្រាស់ទិន្នន័យក្នុងស្តុក');
+        });
+        
         updateStatus();
         
-        // Show update notification
-        function showUpdateNotification(title, message) {
-            const notification = document.createElement('div');
-            notification.className = 'update-notification';
-            notification.textContent = `✨ ${title}: ${message}`;
-            document.body.appendChild(notification);
-            setTimeout(() => notification.remove(), 3000);
+        // Force update with cache busting - ALWAYS fetch from network
+        async function forceUpdateTextContent() {
+            const textElement = document.getElementById('textToCopy');
+            const oldText = localStorage.getItem('metfone_text');
+            
+            try {
+                // Force network request with cache bust
+                const response = await fetch('METFONE.txt?' + Date.now(), {
+                    cache: 'no-store',
+                    headers: {
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache'
+                    }
+                });
+                
+                if (response.ok) {
+                    const newText = await response.text();
+                    
+                    // Only update if content changed
+                    if (oldText !== newText) {
+                        textElement.textContent = newText;
+                        localStorage.setItem('metfone_text', newText);
+                        console.log('🔄 METFONE.txt UPDATED from network');
+                        showUpdateNotification('មេតហ្វូន', 'បានធ្វើបច្ចុប្បន្នភាពដោយស្វ័យប្រវត្តិ');
+                        return true;
+                    } else {
+                        console.log('✅ METFONE.txt is up to date');
+                        return false;
+                    }
+                }
+            } catch(e) {
+                console.log('⚠️ Network failed for METFONE.txt');
+            }
+            return false;
         }
         
-        // Load text content with Network First strategy
+        async function forceUpdateCodeContent() {
+            const codeElement = document.getElementById('codeToCopy');
+            const oldCode = localStorage.getItem('cellcard_code');
+            
+            try {
+                const response = await fetch('CELLCARD.txt?' + Date.now(), {
+                    cache: 'no-store',
+                    headers: {
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache'
+                    }
+                });
+                
+                if (response.ok) {
+                    const newCode = await response.text();
+                    
+                    if (oldCode !== newCode) {
+                        codeElement.textContent = newCode;
+                        localStorage.setItem('cellcard_code', newCode);
+                        console.log('🔄 CELLCARD.txt UPDATED from network');
+                        showUpdateNotification('សែលកាត', 'បានធ្វើបច្ចុប្បន្នភាពដោយស្វ័យប្រវត្តិ');
+                        return true;
+                    } else {
+                        console.log('✅ CELLCARD.txt is up to date');
+                        return false;
+                    }
+                }
+            } catch(e) {
+                console.log('⚠️ Network failed for CELLCARD.txt');
+            }
+            return false;
+        }
+        
+        // Regular load function (non-force) for initial load
         async function loadTextContent() {
             const textElement = document.getElementById('textToCopy');
             const oldText = localStorage.getItem('metfone_text');
             
             try {
-                // Try network first with cache-bust
                 const response = await fetch('METFONE.txt?' + Date.now(), {
                     cache: 'no-store'
                 });
@@ -771,8 +888,7 @@
                     const newText = await response.text();
                     textElement.textContent = newText;
                     
-                    // Check if updated
-                    if (oldText && oldText !== newText) {
+                    if (oldText && oldText !== newText && !isFirstLoad) {
                         console.log('🔄 METFONE.txt updated from network');
                         showUpdateNotification('មេតហ្វូន', 'បានធ្វើបច្ចុប្បន្នភាព');
                     }
@@ -785,7 +901,6 @@
                 console.log('⚠️ Network failed for METFONE.txt');
             }
             
-            // Fallback to localStorage or cache
             if (oldText) {
                 textElement.textContent = oldText;
                 console.log('📦 Loaded METFONE from localStorage');
@@ -807,7 +922,7 @@
                     const newCode = await response.text();
                     codeElement.textContent = newCode;
                     
-                    if (oldCode && oldCode !== newCode) {
+                    if (oldCode && oldCode !== newCode && !isFirstLoad) {
                         console.log('🔄 CELLCARD.txt updated from network');
                         showUpdateNotification('សែលកាត', 'បានធ្វើបច្ចុប្បន្នភាព');
                     }
@@ -829,14 +944,24 @@
             }
         }
         
-        // Register Service Worker
+        // Register Service Worker with auto-update
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
                     .then(registration => {
                         console.log('✅ Service Worker registered successfully');
                         
-                        // Check for updates to service worker
+                        // Check for SW updates immediately
+                        registration.update();
+                        
+                        // Check for SW updates every hour
+                        setInterval(() => {
+                            if (navigator.onLine) {
+                                registration.update();
+                                console.log('🔄 Checking for Service Worker updates...');
+                            }
+                        }, 3600000);
+                        
                         registration.addEventListener('updatefound', () => {
                             const newWorker = registration.installing;
                             console.log('🔄 New Service Worker found');
@@ -858,35 +983,83 @@
             });
         }
         
-        // Periodic update check (every 3 minutes when online)
+        // Background sync - check for updates periodically
         let lastUpdateCheck = 0;
+        let isChecking = false;
+        
         async function autoUpdateCheck() {
-            if (!navigator.onLine) return;
+            if (!navigator.onLine) {
+                console.log('📡 Offline, skipping update check');
+                return;
+            }
+            
+            if (isChecking) {
+                console.log('⏳ Update check already in progress');
+                return;
+            }
             
             const now = Date.now();
-            if (now - lastUpdateCheck < 180000) return; // 3 minutes
+            if (now - lastUpdateCheck < 30000) { // Check every 30 seconds when online
+                return;
+            }
             
             lastUpdateCheck = now;
+            isChecking = true;
+            
             console.log('🔍 Auto checking for updates...');
-            await loadTextContent();
-            await loadCodeContent();
+            
+            try {
+                const [textUpdated, codeUpdated] = await Promise.all([
+                    forceUpdateTextContent(),
+                    forceUpdateCodeContent()
+                ]);
+                
+                if (textUpdated || codeUpdated) {
+                    console.log('✅ Updates applied successfully');
+                }
+            } catch(err) {
+                console.log('⚠️ Auto update check error:', err);
+            } finally {
+                isChecking = false;
+            }
         }
         
-        // Check when coming online
-        window.addEventListener('online', () => {
-            console.log('📡 Back online, checking for updates...');
-            setTimeout(() => {
-                loadTextContent();
-                loadCodeContent();
-            }, 500);
+        // Show update notification with custom styling for network events
+        function showUpdateNotification(title, message) {
+            // Remove existing notifications
+            const existingNotifications = document.querySelectorAll('.update-notification');
+            existingNotifications.forEach(notif => notif.remove());
+            
+            const notification = document.createElement('div');
+            notification.className = 'update-notification';
+            notification.textContent = `✨ ${title}: ${message}`;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+        
+        // Immediate check when page becomes visible
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden && navigator.onLine) {
+                console.log('👁️ Page became visible, checking for updates...');
+                autoUpdateCheck();
+            }
         });
         
-        // Auto check every 3 minutes
-        setInterval(autoUpdateCheck, 60000); // Check every minute but throttled to 3 min
+        // Periodic check every 30 seconds when online
+        setInterval(() => {
+            if (navigator.onLine) {
+                autoUpdateCheck();
+            }
+        }, 30000);
         
         // Initial load
         loadTextContent();
         loadCodeContent();
+        
+        // After first load, enable update notifications
+        setTimeout(() => {
+            isFirstLoad = false;
+        }, 1000);
         
         // Toast functions
         function showToast(element) {
@@ -1005,6 +1178,17 @@
         if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
             installBtn.style.display = 'none';
         }
+        
+        // Add connection quality monitoring
+        if ('connection' in navigator) {
+            const connection = navigator.connection;
+            connection.addEventListener('change', () => {
+                console.log('📶 Connection type changed:', connection.effectiveType);
+                if (connection.effectiveType !== 'none' && navigator.onLine) {
+                    autoUpdateCheck();
+                }
+            });
+        }
     </script>
 </body>
-</html>
+                                    </html>
