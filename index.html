@@ -14,7 +14,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="TEVA">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="TEVA">
+   meta name="application-name" content="TEVA">
     <meta name="msapplication-TileColor" content="#0a0a2a">
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -168,7 +168,7 @@
             opacity: 0;
             animation: fadeSlideUp 0.8s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
             animation-delay: 0.5s;
-            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            transition: transform 0.4s ease;
         }
         
         .card:hover {
@@ -187,8 +187,8 @@
             gap: 18px;
         }
         
+        /* BUTTON STYLES - NO OUTER GLOW */
         .btn {
-            position: relative;
             width: 100%;
             padding: 18px 24px;
             border: none;
@@ -197,46 +197,22 @@
             font-weight: 600;
             font-family: 'Noto Sans Khmer', 'Inter', sans-serif;
             cursor: pointer;
-            transition: all 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            transition: all 0.3s ease;
             background: linear-gradient(105deg, #1e2a3a 0%, #0f1722 100%);
             color: #e8e2c7;
             border: 1px solid rgba(212, 175, 55, 0.3);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        }
-        
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.2), transparent);
-            transition: left 0.5s ease;
-        }
-        
-        .btn:hover::before {
-            left: 100%;
+            box-shadow: none;
         }
         
         .btn:hover {
             transform: translateY(-2px);
-            border-color: rgba(212, 175, 55, 0.6);
+            border-color: rgba(212, 175, 55, 0.7);
             background: linear-gradient(105deg, #253544, #121a28);
+            box-shadow: none;
         }
         
-        .btn-glow {
-            position: absolute;
-            inset: 0;
-            border-radius: 40px;
-            background: radial-gradient(circle at 30% 50%, rgba(212,175,55,0.15), transparent 70%);
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
-        }
-        
-        .btn:hover .btn-glow {
-            opacity: 1;
+        .btn:active {
+            transform: translateY(1px);
         }
         
         .toast-premium {
@@ -253,6 +229,12 @@
             width: fit-content;
             margin-left: auto;
             margin-right: auto;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
         .toast-premium .toast-icon {
@@ -447,6 +429,13 @@
             border: 1px solid rgba(255, 245, 180, 0.6);
             display: none;
             white-space: nowrap;
+            transition: all 0.3s ease;
+            box-shadow: none;
+        }
+        
+        .install-prompt:hover {
+            transform: translateX(-50%) translateY(-2px);
+            background: linear-gradient(135deg, #e5c458, #d4af37);
         }
         
         .install-prompt::before {
@@ -510,6 +499,7 @@
             .btn { padding: 15px 20px; font-size: 15px; }
             .install-prompt { padding: 12px 22px; font-size: 13px; }
             .update-notification { font-size: 11px; padding: 8px 16px; }
+            .status-badge { font-size: 8px; padding: 3px 8px; }
         }
     </style>
 </head>
@@ -529,29 +519,23 @@
         <div class="header-badge">
             <div class="badge">
                 <div class="badge-icon"></div>
-                <div class="badge-text">កាលបរិច្ឆេទកំណែ · <span>31 មីនា 2026</span></div>
+                <div class="badge-text">កាលបរិច្ឆេទកំណែ · <span>30 មីនា 2026</span></div>
             </div>
         </div>
         
         <div class="card">
             <div class="button-group">
-                <button class="btn" onclick="copyText()">
-                    <span>មេតហ្វូន</span>
-                    <div class="btn-glow"></div>
-                </button>
-                <button class="btn" onclick="copyCode()">
-                    <span>សែលកាត</span>
-                    <div class="btn-glow"></div>
-                </button>
+                <button class="btn" onclick="copyText()">មេតហ្វូន</button>
+                <button class="btn" onclick="copyCode()">សែលកាត</button>
             </div>
             
             <div style="display: flex; justify-content: center; margin-top: 28px;">
                 <div id="toast" class="toast-premium" style="display: none;">
-                    <span class="toast-icon">✔</span>
+                    <span class="toast-icon">✓</span>
                     <span class="toast-message">ចម្លងជោគជ័យ</span>
                 </div>
                 <div id="toastCode" class="toast-premium" style="display: none;">
-                    <span class="toast-icon">✔</span>
+                    <span class="toast-icon">✓</span>
                     <span class="toast-message">ចម្លងជោគជ័យ</span>
                 </div>
             </div>
@@ -606,7 +590,7 @@
         }
         createParticles();
         
-        // Status update
+        // Status
         function updateStatus() {
             const badge = document.getElementById('statusBadge');
             if (navigator.onLine) {
@@ -618,7 +602,6 @@
             }
         }
         
-        // Show notification
         function showUpdateNotification(title, message) {
             const notification = document.createElement('div');
             notification.className = 'update-notification';
@@ -627,14 +610,13 @@
             setTimeout(() => notification.remove(), 3000);
         }
         
-        // Force update immediately
+        // Force update
         async function forceUpdateContent() {
             if (!navigator.onLine) return false;
             
-            console.log('🔄 Updating content...');
+            console.log('🔄 Updating...');
             let updated = false;
             
-            // Update METFONE
             try {
                 const response = await fetch('METFONE.txt?' + Date.now(), { cache: 'no-store' });
                 if (response.ok) {
@@ -650,9 +632,8 @@
                         localStorage.setItem('metfone_text', newText);
                     }
                 }
-            } catch(e) { console.log('METFONE update failed:', e); }
+            } catch(e) { console.log('METFONE error:', e); }
             
-            // Update CELLCARD
             try {
                 const response = await fetch('CELLCARD.txt?' + Date.now(), { cache: 'no-store' });
                 if (response.ok) {
@@ -668,9 +649,8 @@
                         localStorage.setItem('cellcard_code', newCode);
                     }
                 }
-            } catch(e) { console.log('CELLCARD update failed:', e); }
+            } catch(e) { console.log('CELLCARD error:', e); }
             
-            // Notify service worker
             if (navigator.serviceWorker && navigator.serviceWorker.controller) {
                 navigator.serviceWorker.controller.postMessage('forceUpdate');
             }
@@ -678,7 +658,6 @@
             return updated;
         }
         
-        // Load from backup
         function loadFromBackup() {
             const savedText = localStorage.getItem('metfone_text');
             const savedCode = localStorage.getItem('cellcard_code');
@@ -686,9 +665,9 @@
             if (savedCode) document.getElementById('codeToCopy').textContent = savedCode;
         }
         
-        // Online event - UPDATE IMMEDIATELY
+        // Online/Offline events
         window.addEventListener('online', async () => {
-            console.log('🌐 Online! Updating immediately...');
+            console.log('🌐 Online!');
             updateStatus();
             const badge = document.getElementById('statusBadge');
             badge.textContent = '● Updating...';
@@ -708,17 +687,17 @@
             loadFromBackup();
         });
         
-        // Check every 10 seconds
+        // Auto update every 10 seconds
         setInterval(() => {
             if (navigator.onLine) forceUpdateContent();
         }, 10000);
         
-        // Check when page becomes visible
+        // Update when page becomes visible
         document.addEventListener('visibilitychange', () => {
             if (!document.hidden && navigator.onLine) forceUpdateContent();
         });
         
-        // Register Service Worker
+        // Service Worker
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
@@ -736,7 +715,7 @@
         if (navigator.onLine) forceUpdateContent();
         updateStatus();
         
-        // Toast functions
+        // Toast
         function showToast(element) {
             element.style.display = 'flex';
             setTimeout(() => element.style.display = 'none', 1800);
@@ -768,7 +747,7 @@
             document.body.removeChild(textArea);
         }
         
-        // PWA Installation
+        // PWA
         function createManifest() {
             const manifestData = {
                 name: "TEVA",
@@ -811,4 +790,4 @@
         }
     </script>
 </body>
-</html>
+    </html>
