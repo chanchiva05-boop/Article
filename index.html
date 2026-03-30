@@ -17,10 +17,22 @@
     <meta name="application-name" content="TEVA">
     <meta name="msapplication-TileColor" content="#0a0a2a">
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Khmer:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
     <style>
+        /* Import Khmer OS Battambang */
+        @font-face {
+            font-family: 'Khmer OS Battambang';
+            src: local('Khmer OS Battambang'), local('KhmerOSBattambang');
+            font-weight: normal;
+            font-style: normal;
+        }
+        
+        @font-face {
+            font-family: 'Khmer OS Battambang';
+            src: local('Khmer OS Battambang Bold'), local('KhmerOSBattambang-Bold');
+            font-weight: bold;
+            font-style: normal;
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -31,7 +43,7 @@
             height: 100vh;
             overflow: hidden;
             background: #0a0a2a;
-            font-family: 'Noto Sans Khmer', 'Inter', system-ui, -apple-system, sans-serif;
+            font-family: 'Khmer OS Battambang', 'Times New Roman', Times, serif;
         }
         
         .gradient-bg {
@@ -157,7 +169,7 @@
             letter-spacing: 1.5px;
             color: #f0e9cf;
             text-transform: uppercase;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Times New Roman', Times, serif;
         }
         
         .badge-text span {
@@ -210,7 +222,7 @@
             border-radius: 40px;
             font-size: 17px;
             font-weight: 600;
-            font-family: 'Noto Sans Khmer', 'Inter', sans-serif;
+            font-family: 'Khmer OS Battambang', 'Times New Roman', Times, serif;
             cursor: pointer;
             transition: all 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.1);
             overflow: hidden;
@@ -277,6 +289,7 @@
             width: fit-content;
             margin-left: auto;
             margin-right: auto;
+            font-family: 'Khmer OS Battambang', 'Times New Roman', Times, serif;
         }
         
         .toast-premium .toast-icon {
@@ -289,7 +302,7 @@
             font-weight: 500;
             color: #4ade80;
             letter-spacing: 0.3px;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Khmer OS Battambang', 'Times New Roman', Times, serif;
         }
         
         @keyframes toastGlide {
@@ -510,7 +523,7 @@
             border-radius: 60px;
             font-size: 15px;
             font-weight: 700;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Khmer OS Battambang', 'Times New Roman', Times, serif;
             cursor: pointer;
             z-index: 100;
             border: 1px solid rgba(255, 245, 180, 0.6);
@@ -554,7 +567,7 @@
             padding: 6px 14px;
             border-radius: 30px;
             font-size: 11px;
-            font-family: 'Inter', monospace;
+            font-family: 'Times New Roman', Times, serif;
             font-weight: 600;
             z-index: 200;
             pointer-events: none;
@@ -586,7 +599,7 @@
             font-size: 13px;
             font-weight: bold;
             z-index: 1000;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Khmer OS Battambang', 'Times New Roman', Times, serif;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             animation: fadeInOut 3s ease forwards;
             white-space: nowrap;
@@ -1171,7 +1184,7 @@
             
             const manifestData = {
                 name: "TEVA",
-                short_name: "𝕊𝕂𝕐ℕ𝔼𝕋",
+                short_name: "INTERNET 🌐",
                 description: "ចម្លងលេខកូដ Metfone និង Cellcard បានយ៉ាងរហ័ស",
                 start_url: ".",
                 display: "standalone",
@@ -1249,4 +1262,4 @@
         }
     </script>
 </body>
-                                                                                                                                      </html>
+    </html>
