@@ -1090,7 +1090,7 @@
         // PWA manifest & install
         function createManifest() {
             const LOGO_FILE = "teva.png";
-            const manifestData = { name: "TEVA", short_name: "𝕊𝕂𝕐ℕ𝔼𝕋", description: "ចម្លងលេខកូដ Metfone, Cellcard និង Metfone1 បានយ៉ាងរហ័ស", start_url: ".", display: "standalone", orientation: "portrait", theme_color: "#0a0a2a", background_color: "#0a0a2a", icons: [ { src: LOGO_FILE, sizes: "192x192", type: "image/png", purpose: "any maskable" }, { src: LOGO_FILE, sizes: "512x512", type: "image/png", purpose: "any maskable" } ] };
+            const manifestData = { name: "𝕊𝕂𝕐ℕ𝔼𝕋", short_name: "𝕊𝕂𝕐ℕ𝔼𝕋", description: "𝕊𝕂𝕐ℕ𝔼𝕋🟢", start_url: ".", display: "standalone", orientation: "portrait", theme_color: "#0a0a2a", background_color: "#0a0a2a", icons: [ { src: LOGO_FILE, sizes: "192x192", type: "image/png", purpose: "any maskable" }, { src: LOGO_FILE, sizes: "512x512", type: "image/png", purpose: "any maskable" } ] };
             const manifestBlob = new Blob([JSON.stringify(manifestData)], {type: 'application/json'});
             const manifestURL = URL.createObjectURL(manifestBlob);
             const existingLink = document.querySelector('link[rel="manifest"]');
