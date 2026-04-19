@@ -1,309 +1,414 @@
-const CACHE_NAME = 'teva-v10';
-const urlsToCache = [
-  './',
-  './index.html',
-  './METFONE.txt',
-  './CELLCARD.txt',
-  './METFONE1.txt',
-  './teva.png'
+// ===== SERVICE WORKER - TEVA PWA =====
+const CACHE_NAME = 'teva-pwa-v2.0.0';
+const DYNAMIC_CACHE = 'teva-dynamic-v2.0.0';
+
+// Files to cache on install
+const STATIC_ASSETS = [
+    './',
+    './index.html',
+    './teva.png',
+    './METFONE.txt',
+    './CELLCARD.txt',
+    './METFONE1.txt',
+    './manifest.json'
 ];
 
-// Install Service Worker
-self.addEventListener('install', event => {
-  console.log('Service Worker installing...', CACHE_NAME);
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => {
-        console.log('Caching files...');
-        return cache.addAll(urlsToCache);
-      })
-  );
-  self.skipWaiting();
+// Files that should always be fetched from network
+const NETWORK_ONLY = [
+    'METFONE.txt',
+    'CELLCARD.txt',
+    'METFONE1.txt'
+];
+
+// ===== INSTALL EVENT =====
+self.addEventListener('install', (event) => {
+    console.log('🔧 Service Worker: Installing...');
+    
+    event.waitUntil(
+        caches.open(CACHE_NAME)
+            .then((cache) => {
+                console.log('📦 Service Worker: Caching static assets');
+                return cache.addAll(STATIC_ASSETS);
+            })
+            .then(() => {
+                console.log('✅ Service Worker: Install completed');
+                return self.skipWaiting();
+            })
+            .catch((error) => {
+                console.error('❌ Service Worker: Install failed', error);
+            })
+    );
 });
 
-// Network First - ALWAYS try network first for txt files
-async function networkFirst(request) {
-  try {
-    let fetchUrl = request.url;
-    // បន្ថែម METFONE1.txt ក្នុងការពិនិត្យ
-    if (fetchUrl.includes('METFONE.txt') || 
-        fetchUrl.includes('CELLCARD.txt') || 
-        fetchUrl.includes('METFONE1.txt')) {
-      fetchUrl = fetchUrl.split('?')[0] + '?_=' + Date.now();
-    }
+// ===== ACTIVATE EVENT =====
+self.addEventListener('activate', (event) => {
+    console.log('🔄 Service Worker: Activating...');
     
-    const response = await fetch(fetchUrl, { 
-      cache: 'no-store',
-      headers: { 
-        'Cache-Control': 'no-cache, no-store, must-revalidate',
-        'Pragma': 'no-cache'
-      }
-    });
-    
-    if (response && response.status === 200) {
-      const responseToCache = response.clone();
-      const cache = await caches.open(CACHE_NAME);
-      const originalUrl = request.url.split('?')[0];
-      await cache.put(originalUrl, responseToCache);
-      console.log('🔄 Updated cache:', originalUrl);
-      
-      // Notify clients about the update
-      const clients = await self.clients.matchAll();
-      clients.forEach(client => {
-        client.postMessage({ 
-          type: 'contentUpdated', 
-          file: originalUrl,
-          timestamp: Date.now()
-        });
-      });
-      
-      return response;
-    }
-    throw new Error('Network failed');
-  } catch (error) {
-    console.log('📦 Offline or network error, using cache:', request.url);
-    const originalUrl = request.url.split('?')[0];
-    const cachedResponse = await caches.match(originalUrl);
-    if (cachedResponse) {
-      console.log('✅ Found cached version for:', originalUrl);
-      return cachedResponse;
-    }
-    
-    // Fallback for txt files
-    if (originalUrl.includes('METFONE.txt')) {
-      console.log('⚠️ Using fallback for METFONE.txt');
-      return new Response('កាកម៉េសហ្អា', { headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
-    }
-    if (originalUrl.includes('CELLCARD.txt')) {
-      console.log('⚠️ Using fallback for CELLCARD.txt');
-      return new Response('TEVA555', { headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
-    }
-    if (originalUrl.includes('METFONE1.txt')) {
-      console.log('⚠️ Using fallback for METFONE1.txt');
-      return new Response('កាកម៉េសហ្អា1', { headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
-    }
-    return new Response('Offline', { status: 503 });
-  }
-}
-
-// Network First for HTML
-async function htmlNetworkFirst(request) {
-  try {
-    const response = await fetch(request, { 
-      cache: 'no-store',
-      headers: { 
-        'Cache-Control': 'no-cache, no-store, must-revalidate'
-      }
-    });
-    
-    if (response && response.status === 200) {
-      const responseToCache = response.clone();
-      const cache = await caches.open(CACHE_NAME);
-      await cache.put(request, responseToCache);
-      console.log('🔄 Updated HTML cache');
-      return response;
-    }
-    throw new Error('Network failed');
-  } catch (error) {
-    console.log('📦 Using cached HTML');
-    const cachedResponse = await caches.match(request);
-    if (cachedResponse) return cachedResponse;
-    return new Response('Page not available offline', { status: 503 });
-  }
-}
-
-// Cache First for static assets
-function cacheFirst(request) {
-  return caches.match(request)
-    .then(response => {
-      if (response) {
-        console.log('✅ Cache hit for:', request.url);
-        return response;
-      }
-      return fetch(request);
-    });
-}
-
-// Handle fetch events
-self.addEventListener('fetch', event => {
-  const url = event.request.url;
-  
-  // ពិនិត្យគ្រប់ឯកសារ txt ទាំង ៣
-  if (url.includes('METFONE.txt') || 
-      url.includes('CELLCARD.txt') || 
-      url.includes('METFONE1.txt')) {
-    event.respondWith(networkFirst(event.request));
-  }
-  else if (url.includes('index.html') || url === './' || event.request.mode === 'navigate') {
-    event.respondWith(htmlNetworkFirst(event.request));
-  }
-  else {
-    event.respondWith(cacheFirst(event.request));
-  }
+    event.waitUntil(
+        caches.keys()
+            .then((cacheNames) => {
+                return Promise.all(
+                    cacheNames.map((cacheName) => {
+                        if (cacheName !== CACHE_NAME && cacheName !== DYNAMIC_CACHE) {
+                            console.log('🗑️ Service Worker: Deleting old cache:', cacheName);
+                            return caches.delete(cacheName);
+                        }
+                    })
+                );
+            })
+            .then(() => {
+                console.log('✅ Service Worker: Activation completed');
+                return self.clients.claim();
+            })
+    );
 });
 
-// Activate and clean old caches
-self.addEventListener('activate', event => {
-  console.log('Service Worker activating...', CACHE_NAME);
-  event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('Deleting old cache:', cacheName);
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    }).then(() => {
-      console.log('✅ New Service Worker activated, claiming clients...');
-      return self.clients.claim();
-    })
-  );
-});
-
-// Listen for messages from main page
-self.addEventListener('message', async (event) => {
-  console.log('📨 Received message:', event.data);
-  
-  if (event.data === 'forceUpdate') {
-    console.log('📡 Force update triggered - clearing txt caches');
-    const cache = await caches.open(CACHE_NAME);
+// ===== FETCH EVENT =====
+self.addEventListener('fetch', (event) => {
+    const { request } = event;
+    const url = new URL(request.url);
     
-    // លុប txt files ទាំងអស់
-    await cache.delete('./METFONE.txt');
-    await cache.delete('METFONE.txt');
-    await cache.delete('./CELLCARD.txt');
-    await cache.delete('CELLCARD.txt');
-    await cache.delete('./METFONE1.txt');
-    await cache.delete('METFONE1.txt');
+    // Skip non-GET requests
+    if (request.method !== 'GET') return;
     
-    console.log('✅ Cleared txt files from cache');
-    
-    const clients = await self.clients.matchAll();
-    clients.forEach(client => {
-      client.postMessage({ type: 'refreshContent', source: 'sw' });
-    });
-  }
-  
-  if (event.data === 'checkUpdates') {
-    console.log('🔍 Checking for updates...');
-    const cache = await caches.open(CACHE_NAME);
-    let hasUpdates = false;
-    
-    // ពិនិត្យ txt files ទាំង ៣
-    const txtFiles = ['./METFONE.txt', './CELLCARD.txt', './METFONE1.txt'];
-    for (const file of txtFiles) {
-      try {
-        const response = await fetch(file + '?_=' + Date.now(), {
-          cache: 'no-store',
-          headers: { 'Cache-Control': 'no-cache' }
-        });
-        if (response && response.ok) {
-          const cachedResponse = await cache.match(file);
-          const newContent = await response.text();
-          
-          if (cachedResponse) {
-            const oldContent = await cachedResponse.text();
-            if (oldContent !== newContent) {
-              hasUpdates = true;
-              console.log('🔄 Content changed for:', file);
-            }
-          } else {
-            hasUpdates = true;
-          }
-          
-          await cache.put(file, response.clone());
-          console.log('🔄 Updated:', file);
-        }
-      } catch (err) {
-        console.log('⚠️ Failed to update:', file);
-      }
+    // Handle network-only files (text files that update frequently)
+    if (NETWORK_ONLY.some(file => url.pathname.includes(file))) {
+        event.respondWith(networkFirstStrategy(request));
+        return;
     }
     
-    const clients = await self.clients.matchAll();
-    clients.forEach(client => {
-      client.postMessage({ 
-        type: 'updatesChecked', 
-        source: 'sw',
-        hasUpdates: hasUpdates,
-        timestamp: Date.now()
-      });
-    });
-  }
+    // HTML files - Network first, fallback to cache
+    if (request.mode === 'navigate' || url.pathname.endsWith('.html')) {
+        event.respondWith(networkFirstStrategy(request));
+        return;
+    }
+    
+    // Images and static assets - Cache first, fallback to network
+    if (url.pathname.match(/\.(png|jpg|jpeg|gif|svg|ico)$/)) {
+        event.respondWith(cacheFirstStrategy(request));
+        return;
+    }
+    
+    // Default: Stale-while-revalidate
+    event.respondWith(staleWhileRevalidateStrategy(request));
 });
 
-// Periodic background sync
-self.addEventListener('periodicsync', (event) => {
-  if (event.tag === 'update-content') {
-    event.waitUntil(updateContentInBackground());
-  }
-});
+// ===== CACHE STRATEGIES =====
 
-async function updateContentInBackground() {
-  console.log('🔄 Background sync: updating content');
-  const cache = await caches.open(CACHE_NAME);
-  let hasUpdates = false;
-  
-  // ធ្វើបច្ចុប្បន្នភាព txt files ទាំង ៣
-  const filesToUpdate = ['./METFONE.txt', './CELLCARD.txt', './METFONE1.txt'];
-  
-  for (const file of filesToUpdate) {
+// Network First (for HTML and text files that update frequently)
+async function networkFirstStrategy(request) {
     try {
-      const response = await fetch(file + '?_=' + Date.now(), {
-        cache: 'no-store',
-        headers: { 'Cache-Control': 'no-cache' }
-      });
-      if (response && response.ok) {
-        const cachedResponse = await cache.match(file);
-        const newContent = await response.text();
+        const networkResponse = await fetch(request, { cache: 'no-store' });
+        
+        // Update cache with new response
+        const cache = await caches.open(DYNAMIC_CACHE);
+        cache.put(request, networkResponse.clone());
+        
+        return networkResponse;
+    } catch (error) {
+        console.log('⚠️ Network failed, falling back to cache:', request.url);
+        const cachedResponse = await caches.match(request);
         
         if (cachedResponse) {
-          const oldContent = await cachedResponse.text();
-          if (oldContent !== newContent) {
-            hasUpdates = true;
-            console.log('🔄 Background update - content changed:', file);
-          }
+            return cachedResponse;
         }
         
-        await cache.put(file, response.clone());
-        console.log('🔄 Background updated:', file);
-      }
-    } catch (err) {
-      console.log('⚠️ Background update failed for:', file);
+        // Offline fallback for navigation
+        if (request.mode === 'navigate') {
+            return caches.match('./index.html');
+        }
+        
+        throw error;
     }
-  }
-  
-  if (hasUpdates) {
-    const clients = await self.clients.matchAll();
-    clients.forEach(client => {
-      client.postMessage({ 
-        type: 'backgroundUpdate', 
-        source: 'sw',
-        timestamp: Date.now()
-      });
-    });
-  }
 }
 
-// Auto-update Service Worker
-self.addEventListener('fetch', (event) => {
-  if (event.request.url.includes('sw.js')) {
-    event.respondWith(
-      fetch(event.request, {
-        cache: 'no-store',
-        headers: { 'Cache-Control': 'no-cache' }
-      })
-    );
-  }
+// Cache First (for static assets)
+async function cacheFirstStrategy(request) {
+    const cachedResponse = await caches.match(request);
+    
+    if (cachedResponse) {
+        // Update cache in background
+        updateCacheInBackground(request);
+        return cachedResponse;
+    }
+    
+    try {
+        const networkResponse = await fetch(request);
+        const cache = await caches.open(CACHE_NAME);
+        cache.put(request, networkResponse.clone());
+        return networkResponse;
+    } catch (error) {
+        console.error('❌ Fetch failed:', request.url, error);
+        throw error;
+    }
+}
+
+// Stale While Revalidate (for other resources)
+async function staleWhileRevalidateStrategy(request) {
+    const cachedResponse = await caches.match(request);
+    
+    const fetchPromise = fetch(request)
+        .then(async (networkResponse) => {
+            const cache = await caches.open(DYNAMIC_CACHE);
+            cache.put(request, networkResponse.clone());
+            return networkResponse;
+        })
+        .catch((error) => {
+            console.log('⚠️ Network fetch failed:', request.url, error);
+        });
+    
+    return cachedResponse || fetchPromise;
+}
+
+// Background cache update
+async function updateCacheInBackground(request) {
+    try {
+        const networkResponse = await fetch(request);
+        const cache = await caches.open(CACHE_NAME);
+        cache.put(request, networkResponse);
+        console.log('🔄 Background cache updated:', request.url);
+    } catch (error) {
+        console.log('⚠️ Background update failed:', request.url);
+    }
+}
+
+// ===== PERIODIC CONTENT CHECK =====
+const CONTENT_FILES = ['METFONE.txt', 'CELLCARD.txt', 'METFONE1.txt'];
+let lastContentCheck = Date.now();
+
+async function checkForContentUpdates() {
+    console.log('🔍 Checking for content updates...');
+    
+    const updatePromises = CONTENT_FILES.map(async (fileName) => {
+        try {
+            const response = await fetch(fileName + '?t=' + Date.now(), {
+                cache: 'no-store',
+                headers: { 'Cache-Control': 'no-cache' }
+            });
+            
+            if (response.ok) {
+                const newContent = await response.text();
+                const cache = await caches.open(DYNAMIC_CACHE);
+                const cachedResponse = await cache.match(fileName);
+                
+                if (cachedResponse) {
+                    const oldContent = await cachedResponse.text();
+                    if (oldContent !== newContent) {
+                        console.log('🔄 Content updated:', fileName);
+                        await cache.put(fileName, response.clone());
+                        return { fileName, updated: true, content: newContent };
+                    }
+                } else {
+                    await cache.put(fileName, response.clone());
+                    return { fileName, updated: true, content: newContent };
+                }
+            }
+        } catch (error) {
+            console.error('❌ Failed to check update for:', fileName, error);
+        }
+        return { fileName, updated: false };
+    });
+    
+    const results = await Promise.all(updatePromises);
+    const hasUpdates = results.some(r => r.updated);
+    
+    if (hasUpdates) {
+        // Notify all clients about the update
+        const clients = await self.clients.matchAll();
+        clients.forEach(client => {
+            client.postMessage({
+                type: 'contentUpdated',
+                timestamp: Date.now(),
+                updates: results.filter(r => r.updated)
+            });
+        });
+    }
+    
+    lastContentCheck = Date.now();
+    return hasUpdates;
+}
+
+// ===== PERIODIC SYNC =====
+self.addEventListener('periodicsync', (event) => {
+    if (event.tag === 'content-sync') {
+        event.waitUntil(checkForContentUpdates());
+    }
 });
 
-// Handle controller change
-self.addEventListener('controllerchange', () => {
-  console.log('🔄 Service Worker controller changed');
-  self.clients.matchAll().then(clients => {
-    clients.forEach(client => {
-      client.postMessage({ type: 'swUpdated', source: 'sw' });
-    });
-  });
+// ===== BACKGROUND SYNC =====
+self.addEventListener('sync', (event) => {
+    if (event.tag === 'content-update') {
+        event.waitUntil(checkForContentUpdates());
+    }
 });
+
+// ===== PUSH NOTIFICATION =====
+self.addEventListener('push', (event) => {
+    let data = {
+        title: 'TEVA',
+        body: 'មានការធ្វើបច្ចុប្បន្នភាពថ្មី!',
+        icon: './teva.png',
+        badge: './teva.png'
+    };
+    
+    if (event.data) {
+        try {
+            data = { ...data, ...event.data.json() };
+        } catch (e) {
+            data.body = event.data.text();
+        }
+    }
+    
+    const options = {
+        body: data.body,
+        icon: data.icon,
+        badge: data.badge,
+        vibrate: [200, 100, 200],
+        data: {
+            dateOfArrival: Date.now(),
+            primaryKey: 1
+        },
+        actions: [
+            {
+                action: 'open',
+                title: 'បើកមើល'
+            },
+            {
+                action: 'close',
+                title: 'បិទ'
+            }
+        ]
+    };
+    
+    event.waitUntil(
+        self.registration.showNotification(data.title, options)
+    );
+});
+
+// ===== NOTIFICATION CLICK =====
+self.addEventListener('notificationclick', (event) => {
+    event.notification.close();
+    
+    if (event.action === 'close') return;
+    
+    event.waitUntil(
+        clients.matchAll({ type: 'window', includeUncontrolled: true })
+            .then((clientList) => {
+                for (const client of clientList) {
+                    if (client.url.includes('/index.html') && 'focus' in client) {
+                        return client.focus();
+                    }
+                }
+                return clients.openWindow('./');
+            })
+    );
+});
+
+// ===== MESSAGE HANDLER =====
+self.addEventListener('message', (event) => {
+    console.log('📨 Service Worker received message:', event.data);
+    
+    if (event.data.type === 'SKIP_WAITING') {
+        self.skipWaiting();
+    }
+    
+    if (event.data.type === 'CHECK_UPDATES') {
+        event.waitUntil(
+            checkForContentUpdates().then((hasUpdates) => {
+                event.ports[0].postMessage({ hasUpdates });
+            })
+        );
+    }
+    
+    if (event.data.type === 'CLEAR_CACHE') {
+        event.waitUntil(
+            caches.keys().then((cacheNames) => {
+                return Promise.all(
+                    cacheNames.map((cacheName) => caches.delete(cacheName))
+                );
+            }).then(() => {
+                console.log('🗑️ All caches cleared');
+                event.ports[0].postMessage({ success: true });
+            })
+        );
+    }
+});
+
+// ===== AUTO UPDATE CHECK (Every 5 minutes) =====
+setInterval(() => {
+    const now = Date.now();
+    if (now - lastContentCheck > 300000) { // 5 minutes
+        checkForContentUpdates().then((hasUpdates) => {
+            if (hasUpdates) {
+                console.log('🔄 Auto-update detected changes');
+            }
+        });
+    }
+}, 300000);
+
+// ===== ONLINE/OFFLINE HANDLING =====
+self.addEventListener('message', (event) => {
+    if (event.data.type === 'ONLINE_STATUS') {
+        const isOnline = event.data.online;
+        console.log(`🌐 Service Worker: Client is ${isOnline ? 'online' : 'offline'}`);
+        
+        if (isOnline) {
+            checkForContentUpdates().then((hasUpdates) => {
+                if (hasUpdates) {
+                    self.clients.matchAll().then((clients) => {
+                        clients.forEach((client) => {
+                            client.postMessage({
+                                type: 'backgroundUpdate',
+                                message: 'មាតិកាត្រូវបានធ្វើបច្ចុប្បន្នភាពពេលអ្នកនៅក្រៅបណ្តាញ'
+                            });
+                        });
+                    });
+                }
+            });
+        }
+    }
+});
+
+// ===== VERSION CHECK =====
+async function checkVersion() {
+    try {
+        const response = await fetch('./index.html?t=' + Date.now(), {
+            cache: 'no-store',
+            headers: { 'Cache-Control': 'no-cache' }
+        });
+        
+        if (response.ok) {
+            const newHtml = await response.text();
+            const versionMatch = newHtml.match(/CACHE_NAME = 'teva-pwa-v([\d.]+)'/);
+            
+            if (versionMatch) {
+                const newVersion = versionMatch[1];
+                const currentVersion = CACHE_NAME.match(/v([\d.]+)/)[1];
+                
+                if (newVersion !== currentVersion) {
+                    console.log('🔄 New version detected:', newVersion);
+                    
+                    const clients = await self.clients.matchAll();
+                    clients.forEach(client => {
+                        client.postMessage({
+                            type: 'newVersion',
+                            version: newVersion
+                        });
+                    });
+                    
+                    return true;
+                }
+            }
+        }
+    } catch (error) {
+        console.error('❌ Version check failed:', error);
+    }
+    return false;
+}
+
+// Check version every hour
+setInterval(() => {
+    checkVersion();
+}, 3600000);
+
+console.log('✅ TEVA Service Worker v2.0.0 loaded and ready!');
