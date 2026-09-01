@@ -273,6 +273,26 @@
             opacity: 1;
         }
         
+        /* Sub-button group for FOR PC */
+        .sub-button-group {
+            display: flex;
+            gap: 14px;
+            margin-top: 6px;
+        }
+        
+        .sub-button-group .btn {
+            flex: 1;
+            padding: 14px 16px;
+            font-size: 15px;
+            background: linear-gradient(105deg, #1a2535, #0d1520);
+            border-color: rgba(212, 175, 55, 0.2);
+        }
+        
+        .sub-button-group .btn:hover {
+            border-color: rgba(212, 175, 55, 0.6);
+            background: linear-gradient(105deg, #243544, #101a28);
+        }
+        
         .toast-premium {
             margin-top: 24px;
             display: none;
@@ -634,6 +654,10 @@
                 padding: 15px 20px;
                 font-size: 15px;
             }
+            .sub-button-group .btn {
+                padding: 12px 14px;
+                font-size: 13px;
+            }
             .install-prompt {
                 padding: 12px 22px;
                 font-size: 13px;
@@ -695,11 +719,28 @@
                     <span>សែលកាត</span>
                     <div class="btn-glow"></div>
                 </button>
-                <!-- NEW BUTTON: METFONE1 -->
                 <button class="btn" onclick="copyMetfone1()">
                     <span>មេតហ្វូន ១</span>
                     <div class="btn-glow"></div>
                 </button>
+                
+                <!-- FOR PC Button with sub-buttons -->
+                <button class="btn" onclick="toggleForPC()" style="background: linear-gradient(105deg, #2a1e3a, #1a1228); border-color: rgba(180, 130, 200, 0.3);">
+                    <span>FOR PC</span>
+                    <span id="pcArrow" style="margin-left: 8px; font-size: 14px;">▾</span>
+                    <div class="btn-glow"></div>
+                </button>
+                
+                <div id="pcSubButtons" class="sub-button-group" style="display: none;">
+                    <button class="btn" onclick="copyM()">
+                        <span>M</span>
+                        <div class="btn-glow"></div>
+                    </button>
+                    <button class="btn" onclick="copyC()">
+                        <span>C</span>
+                        <div class="btn-glow"></div>
+                    </button>
+                </div>
             </div>
             
             <div style="display: flex; justify-content: center; margin-top: 28px; gap: 12px; flex-wrap: wrap;">
@@ -712,6 +753,14 @@
                     <span class="toast-message">ចម្លងជោគជ័យ</span>
                 </div>
                 <div id="toastMetfone1" class="toast-premium" style="display: none;">
+                    <span class="toast-icon">✔</span>
+                    <span class="toast-message">ចម្លងជោគជ័យ</span>
+                </div>
+                <div id="toastM" class="toast-premium" style="display: none;">
+                    <span class="toast-icon">✔</span>
+                    <span class="toast-message">ចម្លងជោគជ័យ</span>
+                </div>
+                <div id="toastC" class="toast-premium" style="display: none;">
                     <span class="toast-icon">✔</span>
                     <span class="toast-message">ចម្លងជោគជ័យ</span>
                 </div>
@@ -729,6 +778,8 @@
     <div class="text-to-copy" id="textToCopy">កំពុងផ្ទុកអត្ថបទ...</div>
     <div class="text-to-copy" id="codeToCopy">កំពុងផ្ទុកកូដ...</div>
     <div class="text-to-copy" id="metfone1ToCopy">កំពុងផ្ទុកអត្ថបទ METFONE1...</div>
+    <div class="text-to-copy" id="mToCopy">កំពុងផ្ទុក M...</div>
+    <div class="text-to-copy" id="cToCopy">កំពុងផ្ទុក C...</div>
     
     <div class="birds-container">
         <div class="bird bird1"><div class="bird-body"></div><div class="bird-wing left"></div><div class="bird-wing right"></div><div class="bird-tail"></div><div class="bird-eye"></div></div>
@@ -750,6 +801,22 @@
     <button id="installBtn" class="install-prompt">ដំឡើងកម្មវិធី</button>
     
     <script>
+        // Toggle FOR PC sub-buttons
+        let pcExpanded = false;
+        
+        function toggleForPC() {
+            pcExpanded = !pcExpanded;
+            const subBtns = document.getElementById('pcSubButtons');
+            const arrow = document.getElementById('pcArrow');
+            if (pcExpanded) {
+                subBtns.style.display = 'flex';
+                arrow.textContent = '▴';
+            } else {
+                subBtns.style.display = 'none';
+                arrow.textContent = '▾';
+            }
+        }
+        
         // Store the last update time for version date
         let lastUpdateTime = null;
         
@@ -838,81 +905,111 @@
             setTimeout(() => notification.remove(), 3000);
         }
         
-        // Force update for METFONE1
-        async function forceUpdateMetfone1Content() {
-            const metfone1Element = document.getElementById('metfone1ToCopy');
-            const oldContent = localStorage.getItem('metfone1_text');
-            
-            try {
-                const response = await fetch('METFONE1.txt?' + Date.now(), {
-                    cache: 'no-store',
-                    headers: {
-                        'Cache-Control': 'no-cache, no-store, must-revalidate',
-                        'Pragma': 'no-cache'
-                    }
-                });
-                
-                if (response.ok) {
-                    const newContent = await response.text();
-                    
-                    if (oldContent !== newContent) {
-                        metfone1Element.textContent = newContent;
-                        localStorage.setItem('metfone1_text', newContent);
-                        console.log('🔄 METFONE1.txt UPDATED from network');
-                        showUpdateNotification('មេតហ្វូន ១', 'បានធ្វើបច្ចុប្បន្នភាពដោយស្វ័យប្រវត្តិ');
-                        return true;
-                    } else {
-                        console.log('✅ METFONE1.txt is up to date');
-                        return false;
-                    }
-                }
-            } catch(e) {
-                console.log('⚠️ Network failed for METFONE1.txt');
-            }
-            return false;
-        }
-        
-        // Load METFONE1 content
-        async function loadMetfone1Content() {
-            const metfone1Element = document.getElementById('metfone1ToCopy');
-            const oldContent = localStorage.getItem('metfone1_text');
+        // Load M content from M.txt
+        async function loadMContent() {
+            const mElement = document.getElementById('mToCopy');
+            const oldContent = localStorage.getItem('m_text');
             let contentChanged = false;
-            
             try {
-                const response = await fetch('METFONE1.txt?' + Date.now(), {
-                    cache: 'no-store'
-                });
+                const response = await fetch('M.txt?' + Date.now(), { cache: 'no-store' });
                 if (response.ok) {
                     const newContent = await response.text();
-                    metfone1Element.textContent = newContent;
-                    
+                    mElement.textContent = newContent;
                     if (oldContent && oldContent !== newContent) {
-                        console.log('🔄 METFONE1.txt updated from network');
-                        if (!isFirstLoad) {
-                            showUpdateNotification('មេតហ្វូន ១', 'បានធ្វើបច្ចុប្បន្នភាព');
-                        }
+                        if (!isFirstLoad) showUpdateNotification('M', 'បានធ្វើបច្ចុប្បន្នភាព');
                         contentChanged = true;
                     }
-                    
-                    localStorage.setItem('metfone1_text', newContent);
-                    console.log('✅ Loaded latest METFONE1.txt');
+                    localStorage.setItem('m_text', newContent);
+                    console.log('✅ Loaded latest M.txt');
                     return contentChanged;
                 }
             } catch(e) {
-                console.log('⚠️ Network failed for METFONE1.txt');
+                console.log('⚠️ Network failed for M.txt');
             }
-            
             if (oldContent) {
-                metfone1Element.textContent = oldContent;
-                console.log('📦 Loaded METFONE1 from localStorage');
+                mElement.textContent = oldContent;
+                console.log('📦 Loaded M from localStorage');
             } else {
-                metfone1Element.textContent = 'កាកម៉េសហ្អា1';
-                console.log('💾 Loaded METFONE1 from fallback');
+                mElement.textContent = 'M content not available';
             }
             return false;
         }
         
-        // Existing load functions (keep original)
+        // Load C content from C.txt
+        async function loadCContent() {
+            const cElement = document.getElementById('cToCopy');
+            const oldContent = localStorage.getItem('c_text');
+            let contentChanged = false;
+            try {
+                const response = await fetch('C.txt?' + Date.now(), { cache: 'no-store' });
+                if (response.ok) {
+                    const newContent = await response.text();
+                    cElement.textContent = newContent;
+                    if (oldContent && oldContent !== newContent) {
+                        if (!isFirstLoad) showUpdateNotification('C', 'បានធ្វើបច្ចុប្បន្នភាព');
+                        contentChanged = true;
+                    }
+                    localStorage.setItem('c_text', newContent);
+                    console.log('✅ Loaded latest C.txt');
+                    return contentChanged;
+                }
+            } catch(e) {
+                console.log('⚠️ Network failed for C.txt');
+            }
+            if (oldContent) {
+                cElement.textContent = oldContent;
+                console.log('📦 Loaded C from localStorage');
+            } else {
+                cElement.textContent = 'C content not available';
+            }
+            return false;
+        }
+        
+        // Force update for M
+        async function forceUpdateMContent() {
+            const mElement = document.getElementById('mToCopy');
+            const oldContent = localStorage.getItem('m_text');
+            try {
+                const response = await fetch('M.txt?' + Date.now(), {
+                    cache: 'no-store',
+                    headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate' }
+                });
+                if (response.ok) {
+                    const newContent = await response.text();
+                    if (oldContent !== newContent) {
+                        mElement.textContent = newContent;
+                        localStorage.setItem('m_text', newContent);
+                        showUpdateNotification('M', 'បានធ្វើបច្ចុប្បន្នភាពដោយស្វ័យប្រវត្តិ');
+                        return true;
+                    }
+                }
+            } catch(e) {}
+            return false;
+        }
+        
+        // Force update for C
+        async function forceUpdateCContent() {
+            const cElement = document.getElementById('cToCopy');
+            const oldContent = localStorage.getItem('c_text');
+            try {
+                const response = await fetch('C.txt?' + Date.now(), {
+                    cache: 'no-store',
+                    headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate' }
+                });
+                if (response.ok) {
+                    const newContent = await response.text();
+                    if (oldContent !== newContent) {
+                        cElement.textContent = newContent;
+                        localStorage.setItem('c_text', newContent);
+                        showUpdateNotification('C', 'បានធ្វើបច្ចុប្បន្នភាពដោយស្វ័យប្រវត្តិ');
+                        return true;
+                    }
+                }
+            } catch(e) {}
+            return false;
+        }
+        
+        // Existing load functions
         async function loadTextContent() {
             const textElement = document.getElementById('textToCopy');
             const oldText = localStorage.getItem('metfone_text');
@@ -957,26 +1054,26 @@
             return false;
         }
         
-        // Combined auto update check including METFONE1
-        async function autoUpdateCheck() {
-            if (!navigator.onLine) return;
-            if (isChecking) return;
-            const now = Date.now();
-            if (now - lastUpdateCheck < 30000) return;
-            lastUpdateCheck = now;
-            isChecking = true;
-            console.log('🔍 Auto checking for updates...');
+        async function loadMetfone1Content() {
+            const metfone1Element = document.getElementById('metfone1ToCopy');
+            const oldContent = localStorage.getItem('metfone1_text');
+            let contentChanged = false;
             try {
-                const [textUpdated, codeUpdated, metfone1Updated] = await Promise.all([
-                    forceUpdateTextContent(),
-                    forceUpdateCodeContent(),
-                    forceUpdateMetfone1Content()
-                ]);
-                if (textUpdated || codeUpdated || metfone1Updated) {
-                    updateVersionDate();
+                const response = await fetch('METFONE1.txt?' + Date.now(), { cache: 'no-store' });
+                if (response.ok) {
+                    const newContent = await response.text();
+                    metfone1Element.textContent = newContent;
+                    if (oldContent && oldContent !== newContent) {
+                        if (!isFirstLoad) showUpdateNotification('មេតហ្វូន ១', 'បានធ្វើបច្ចុប្បន្នភាព');
+                        contentChanged = true;
+                    }
+                    localStorage.setItem('metfone1_text', newContent);
+                    return contentChanged;
                 }
-            } catch(err) { console.log('⚠️ Auto update check error:', err); }
-            finally { isChecking = false; }
+            } catch(e) {}
+            if (oldContent) metfone1Element.textContent = oldContent;
+            else metfone1Element.textContent = 'កាកម៉េសហ្អា1';
+            return false;
         }
         
         async function forceUpdateTextContent() {
@@ -1015,6 +1112,48 @@
             return false;
         }
         
+        async function forceUpdateMetfone1Content() {
+            const metfone1Element = document.getElementById('metfone1ToCopy');
+            const oldContent = localStorage.getItem('metfone1_text');
+            try {
+                const response = await fetch('METFONE1.txt?' + Date.now(), { cache: 'no-store', headers: { 'Cache-Control': 'no-cache, no-store' } });
+                if (response.ok) {
+                    const newContent = await response.text();
+                    if (oldContent !== newContent) {
+                        metfone1Element.textContent = newContent;
+                        localStorage.setItem('metfone1_text', newContent);
+                        showUpdateNotification('មេតហ្វូន ១', 'បានធ្វើបច្ចុប្បន្នភាពដោយស្វ័យប្រវត្តិ');
+                        return true;
+                    }
+                }
+            } catch(e) {}
+            return false;
+        }
+        
+        // Combined auto update check
+        async function autoUpdateCheck() {
+            if (!navigator.onLine) return;
+            if (isChecking) return;
+            const now = Date.now();
+            if (now - lastUpdateCheck < 30000) return;
+            lastUpdateCheck = now;
+            isChecking = true;
+            console.log('🔍 Auto checking for updates...');
+            try {
+                const [textUpdated, codeUpdated, metfone1Updated, mUpdated, cUpdated] = await Promise.all([
+                    forceUpdateTextContent(),
+                    forceUpdateCodeContent(),
+                    forceUpdateMetfone1Content(),
+                    forceUpdateMContent(),
+                    forceUpdateCContent()
+                ]);
+                if (textUpdated || codeUpdated || metfone1Updated || mUpdated || cUpdated) {
+                    updateVersionDate();
+                }
+            } catch(err) { console.log('⚠️ Auto update check error:', err); }
+            finally { isChecking = false; }
+        }
+        
         let lastUpdateCheck = 0;
         let isChecking = false;
         
@@ -1036,8 +1175,8 @@
             updateStatusBadge();
             showUpdateNotification('បណ្តាញ', 'កំពុងភ្ជាប់អ៊ីនធឺណិត - កំពុងពិនិត្យមើលការធ្វើបច្ចុប្បន្នភាព');
             setTimeout(() => {
-                Promise.all([forceUpdateTextContent(), forceUpdateCodeContent(), forceUpdateMetfone1Content()])
-                    .then(([u1,u2,u3]) => { if(u1||u2||u3) updateVersionDate(); });
+                Promise.all([forceUpdateTextContent(), forceUpdateCodeContent(), forceUpdateMetfone1Content(), forceUpdateMContent(), forceUpdateCContent()])
+                    .then(([u1,u2,u3,u4,u5]) => { if(u1||u2||u3||u4||u5) updateVersionDate(); });
             }, 100);
         });
         window.addEventListener('offline', () => updateStatusBadge());
@@ -1045,8 +1184,8 @@
         setInterval(() => { if (navigator.onLine) autoUpdateCheck(); }, 30000);
         
         loadSavedVersionDate();
-        Promise.all([loadTextContent(), loadCodeContent(), loadMetfone1Content()]).then(([ch1,ch2,ch3]) => {
-            if (ch1 || ch2 || ch3) updateVersionDate();
+        Promise.all([loadTextContent(), loadCodeContent(), loadMetfone1Content(), loadMContent(), loadCContent()]).then(([ch1,ch2,ch3,ch4,ch5]) => {
+            if (ch1 || ch2 || ch3 || ch4 || ch5) updateVersionDate();
         });
         updateStatusBadge();
         setTimeout(() => { isFirstLoad = false; }, 1000);
@@ -1071,6 +1210,16 @@
             const content = document.getElementById("metfone1ToCopy").textContent;
             navigator.clipboard.writeText(content).then(() => showToast(document.getElementById("toastMetfone1")))
                 .catch(() => fallbackCopyText(content, "toastMetfone1"));
+        }
+        function copyM() {
+            const content = document.getElementById("mToCopy").textContent;
+            navigator.clipboard.writeText(content).then(() => showToast(document.getElementById("toastM")))
+                .catch(() => fallbackCopyText(content, "toastM"));
+        }
+        function copyC() {
+            const content = document.getElementById("cToCopy").textContent;
+            navigator.clipboard.writeText(content).then(() => showToast(document.getElementById("toastC")))
+                .catch(() => fallbackCopyText(content, "toastC"));
         }
         
         function fallbackCopyText(text, toastId) {
