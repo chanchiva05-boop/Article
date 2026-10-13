@@ -723,7 +723,7 @@
                     <div class="btn-glow"></div>
                 </button>
                 
-                <!-- FOR PC Button with sub-buttons (Redirect ទៅ V2Box Config) -->
+                <!-- FOR PC Button with sub-buttons -->
                 <button class="btn" onclick="toggleForPC()" style="background: linear-gradient(105deg, #2a1e3a, #1a1228); border-color: rgba(180, 130, 200, 0.3);">
                     <span>សម្រាប់កុំព្យូទ័រ</span>
                     <span id="pcArrow" style="margin-left: 8px; font-size: 14px;">▾</span>
@@ -731,12 +731,12 @@
                 </button>
                 
                 <div id="pcSubButtons" class="sub-button-group" style="display: none;">
-                    <button class="btn" onclick="openV2BoxConfig('m')">
-                        <span>មេតហ្វូន</span>
+                    <button class="btn" onclick="handlePCButton('m')">
+                        <span id="pcMText">មេតហ្វូន</span>
                         <div class="btn-glow"></div>
                     </button>
-                    <button class="btn" onclick="openV2BoxConfig('c')">
-                        <span>សែលកាត</span>
+                    <button class="btn" onclick="handlePCButton('c')">
+                        <span id="pcCText">សែលកាត</span>
                         <div class="btn-glow"></div>
                     </button>
                 </div>
@@ -805,6 +805,22 @@
                 subBtns.style.display = 'none';
                 arrow.textContent = '▾';
             }
+        }
+        
+        // ============================================
+        // 🖥️ DEVICE DETECTION
+        // ============================================
+        function isMobileDevice() {
+            const ua = navigator.userAgent || navigator.vendor || window.opera;
+            const mobileRegex = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile|tablet/i;
+            // ពិនិត្យ touch + screen size ផងដែរ
+            const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+            const isSmallScreen = window.innerWidth <= 768;
+            
+            // បើ UA ជា mobile ឬ (touch + small screen) → mobile
+            if (mobileRegex.test(ua)) return true;
+            if (isTouchDevice && isSmallScreen) return true;
+            return false;
         }
         
         // ============================================
@@ -878,10 +894,11 @@
         }
         
         // ============================================
-        // 🖥️ OPEN V2BOX CONFIG (For PC - v2ray URI)
+        // 🖥️ HANDLE PC BUTTON (Copy on Desktop, V2Box on Mobile)
         // ============================================
-        function openV2BoxConfig(type) {
+        function handlePCButton(type) {
             const elementId = type === 'm' ? 'mToCopy' : 'cToCopy';
+            const toastId = type === 'm' ? 'toastM' : 'toastC';
             const configName = type === 'm' ? 'METFONE-PC' : 'CELLCARD-PC';
             
             const el = document.getElementById(elementId);
@@ -906,22 +923,26 @@
                                content.startsWith('https://');
             
             if (!isValidUri) {
-                showUpdateNotification('កំហុស', 'ទម្រង់កូដមិនត្រឹមត្រូវ (ត្រូវការ vmess/vless/trojan/ss)');
+                showUpdateNotification('កំហុស', 'ទម្រង់កូដមិនត្រឹមត្រូវ');
                 return;
             }
             
-            // Build V2Box install-config deep link
+            // 💻 បើជាកុំព្យូទ័រ → Copy ទៅ Clipboard
+            if (!isMobileDevice()) {
+                console.log('🖥️ Desktop detected → Copying to clipboard');
+                copyToClipboard(content, toastId);
+                return;
+            }
+            
+            // 📱 បើជាទូរស័ព្ទ → Redirect ទៅ V2Box
+            console.log('📱 Mobile detected → Opening V2Box Config');
             const encodedContent = encodeURIComponent(content);
             const encodedName = encodeURIComponent(configName);
             const v2boxUrl = `v2box://install-config?url=${encodedContent}&name=${encodedName}`;
             
-            console.log('🖥️ Opening V2Box Config:', v2boxUrl);
-            console.log('📦 Content length:', content.length);
-            
-            // Open V2Box
             window.location.href = v2boxUrl;
             
-            // Fallback: redirect to store if app not opened in 2.5s
+            // Fallback to store
             let appOpened = false;
             const checkAppOpened = () => {
                 appOpened = true;
@@ -935,7 +956,6 @@
                 if (!appOpened) {
                     const isAndroid = /android/i.test(navigator.userAgent);
                     const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-                    console.log('📱 V2Box not detected, redirecting to store...');
                     if (isAndroid) {
                         window.location.href = 'https://play.google.com/store/apps/details?id=dev.hexasoftware.v2box';
                     } else if (isIOS) {
@@ -945,6 +965,46 @@
                     }
                 }
             }, 2500);
+        }
+        
+        // ============================================
+        // 📋 COPY TO CLIPBOARD
+        // ============================================
+        function copyToClipboard(text, toastId) {
+            // ព្យាយាមប្រើ Clipboard API ជាមុន
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast(document.getElementById(toastId));
+                    showUpdateNotification('ជោគជ័យ', 'បានចម្លងកូដ');
+                }).catch(() => {
+                    fallbackCopy(text, toastId);
+                });
+            } else {
+                fallbackCopy(text, toastId);
+            }
+        }
+        
+        function fallbackCopy(text, toastId) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed";
+            textArea.style.top = "0";
+            textArea.style.left = "0";
+            textArea.style.opacity = "0";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                if (document.execCommand('copy')) {
+                    showToast(document.getElementById(toastId));
+                    showUpdateNotification('ជោគជ័យ', 'បានចម្លងកូដ');
+                } else {
+                    showUpdateNotification('កំហុស', 'មិនអាចចម្លងបានទេ');
+                }
+            } catch (err) {
+                showUpdateNotification('កំហុស', 'មិនអាចចម្លងបានទេ');
+            }
+            document.body.removeChild(textArea);
         }
         
         // ============================================
@@ -1166,6 +1226,41 @@
             element.style.display = 'flex';
             setTimeout(() => { element.style.display = 'none'; }, 1800);
         }
+        
+        // ============================================
+        // 🎨 UPDATE PC BUTTON LABELS BASED ON DEVICE
+        // ============================================
+        function updatePCLabels() {
+            const pcMText = document.getElementById('pcMText');
+            const pcCText = document.getElementById('pcCText');
+            if (!pcMText || !pcCText) return;
+            
+            if (!isMobileDevice()) {
+                // លើកុំព្យូទ័រ → បង្ហាញថា Copy
+                pcMText.textContent = 'មេតហ្វូន 📋';
+                pcCText.textContent = 'សែលកាត 📋';
+                console.log('🖥️ Desktop detected - PC buttons will COPY');
+            } else {
+                // លើទូរស័ព្ទ → បង្ហាញថា Open
+                pcMText.textContent = 'មេតហ្វូន';
+                pcCText.textContent = 'សែលកាត';
+                console.log('📱 Mobile detected - PC buttons will open V2Box');
+            }
+        }
+        
+        // ហៅនៅពេល DOM រួចរាល់
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', updatePCLabels);
+        } else {
+            updatePCLabels();
+        }
+        
+        // Update labels នៅពេល resize (សម្រាប់ករណីប្តូរ orientation)
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(updatePCLabels, 300);
+        });
         
         // ============================================
         // 📱 PWA MANIFEST & INSTALL
