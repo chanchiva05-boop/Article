@@ -709,7 +709,7 @@
         
         <div class="card">
             <div class="button-group">
-                <!-- ប៊ូតុងទាំង ៣ → Redirect ទៅ V2Box -->
+                <!-- ប៊ូតុងទាំង ៣ → Redirect ទៅ V2Box (Subscription) -->
                 <button class="btn" onclick="openV2Box('metfone')">
                     <span>មេតហ្វូន</span>
                     <div class="btn-glow"></div>
@@ -723,7 +723,7 @@
                     <div class="btn-glow"></div>
                 </button>
                 
-                <!-- FOR PC Button with sub-buttons (Copy ដដែល) -->
+                <!-- FOR PC Button with sub-buttons (Redirect ទៅ V2Box Config) -->
                 <button class="btn" onclick="toggleForPC()" style="background: linear-gradient(105deg, #2a1e3a, #1a1228); border-color: rgba(180, 130, 200, 0.3);">
                     <span>សម្រាប់កុំព្យូទ័រ</span>
                     <span id="pcArrow" style="margin-left: 8px; font-size: 14px;">▾</span>
@@ -731,11 +731,11 @@
                 </button>
                 
                 <div id="pcSubButtons" class="sub-button-group" style="display: none;">
-                    <button class="btn" onclick="copyM()">
+                    <button class="btn" onclick="openV2BoxConfig('m')">
                         <span>មេតហ្វូន</span>
                         <div class="btn-glow"></div>
                     </button>
-                    <button class="btn" onclick="copyC()">
+                    <button class="btn" onclick="openV2BoxConfig('c')">
                         <span>សែលកាត</span>
                         <div class="btn-glow"></div>
                     </button>
@@ -808,7 +808,7 @@
         }
         
         // ============================================
-        // 🚀 OPEN V2BOX (Redirect to App)
+        // 🚀 OPEN V2BOX (Subscription - Mobile)
         // ============================================
         const V2BOX_CONFIG = {
             metfone:  { file: 'METFONE.txt',  name: 'METFONE'  },
@@ -826,7 +826,6 @@
             const el = document.getElementById(type + 'ToCopy');
             let content = el ? el.textContent.trim() : '';
             
-            // Validate content
             if (!content || content === '' || 
                 content.includes('កំពុងផ្ទុក') || 
                 content === 'undefined' || 
@@ -835,7 +834,6 @@
                 return;
             }
             
-            // Check if content is a valid URL (starts with http/https or vless://)
             const isValidUrl = content.startsWith('http://') || 
                                content.startsWith('https://') || 
                                content.startsWith('vless://') ||
@@ -848,18 +846,82 @@
                 return;
             }
             
-            // Build V2Box deep link
             const encodedContent = encodeURIComponent(content);
             const encodedName = encodeURIComponent(config.name);
             const v2boxUrl = `v2box://install-sub?url=${encodedContent}&name=${encodedName}`;
             
-            console.log('🔗 Opening V2Box:', v2boxUrl);
-            console.log('📦 Content length:', content.length);
-            
-            // Try to open V2Box
+            console.log('🔗 Opening V2Box (Sub):', v2boxUrl);
             window.location.href = v2boxUrl;
             
-            // Fallback: if app not opened in 2.5 seconds, redirect to store
+            let appOpened = false;
+            const checkAppOpened = () => {
+                appOpened = true;
+                document.removeEventListener('visibilitychange', checkAppOpened);
+                window.removeEventListener('blur', checkAppOpened);
+            };
+            document.addEventListener('visibilitychange', checkAppOpened);
+            window.addEventListener('blur', checkAppOpened);
+            
+            setTimeout(() => {
+                if (!appOpened) {
+                    const isAndroid = /android/i.test(navigator.userAgent);
+                    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+                    if (isAndroid) {
+                        window.location.href = 'https://play.google.com/store/apps/details?id=dev.hexasoftware.v2box';
+                    } else if (isIOS) {
+                        window.location.href = 'https://apps.apple.com/app/v2box/id6446814670';
+                    } else {
+                        showUpdateNotification('ជូនដំណឹង', 'សូមដំឡើង V2Box ជាមុន');
+                    }
+                }
+            }, 2500);
+        }
+        
+        // ============================================
+        // 🖥️ OPEN V2BOX CONFIG (For PC - v2ray URI)
+        // ============================================
+        function openV2BoxConfig(type) {
+            const elementId = type === 'm' ? 'mToCopy' : 'cToCopy';
+            const configName = type === 'm' ? 'METFONE-PC' : 'CELLCARD-PC';
+            
+            const el = document.getElementById(elementId);
+            let content = el ? el.textContent.trim() : '';
+            
+            // Validate content
+            if (!content || content === '' || 
+                content.includes('កំពុងផ្ទុក') || 
+                content === 'undefined' || 
+                content === 'null' ||
+                content.includes('not available')) {
+                showUpdateNotification('កំហុស', 'ទិន្នន័យមិនទាន់រួចរាល់ សូមរង់ចាំ');
+                return;
+            }
+            
+            // Validate v2ray URI format
+            const isValidUri = content.startsWith('vmess://') || 
+                               content.startsWith('vless://') || 
+                               content.startsWith('trojan://') || 
+                               content.startsWith('ss://') ||
+                               content.startsWith('http://') ||
+                               content.startsWith('https://');
+            
+            if (!isValidUri) {
+                showUpdateNotification('កំហុស', 'ទម្រង់កូដមិនត្រឹមត្រូវ (ត្រូវការ vmess/vless/trojan/ss)');
+                return;
+            }
+            
+            // Build V2Box install-config deep link
+            const encodedContent = encodeURIComponent(content);
+            const encodedName = encodeURIComponent(configName);
+            const v2boxUrl = `v2box://install-config?url=${encodedContent}&name=${encodedName}`;
+            
+            console.log('🖥️ Opening V2Box Config:', v2boxUrl);
+            console.log('📦 Content length:', content.length);
+            
+            // Open V2Box
+            window.location.href = v2boxUrl;
+            
+            // Fallback: redirect to store if app not opened in 2.5s
             let appOpened = false;
             const checkAppOpened = () => {
                 appOpened = true;
@@ -975,8 +1037,6 @@
         // ============================================
         // 📥 LOAD CONTENT FROM FILES
         // ============================================
-        
-        // Generic loader
         async function loadContent(file, elementId, storageKey, fallbackText) {
             const element = document.getElementById(elementId);
             const oldContent = localStorage.getItem(storageKey);
@@ -1006,7 +1066,6 @@
             return false;
         }
         
-        // Force update (for auto-refresh)
         async function forceUpdate(file, elementId, storageKey) {
             const element = document.getElementById(elementId);
             const oldContent = localStorage.getItem(storageKey);
@@ -1028,7 +1087,6 @@
             return false;
         }
         
-        // Load functions for each file
         const loadMetfone  = () => loadContent('METFONE.txt',  'metfoneToCopy',  'metfone_text',  'កាកម៉េសហ្អា');
         const loadCellcard = () => loadContent('CELLCARD.txt', 'cellcardToCopy', 'cellcard_code', 'TEVA555');
         const loadMetfone1 = () => loadContent('METFONE1.txt', 'metfone1ToCopy', 'metfone1_text', 'កាកម៉េសហ្អា1');
@@ -1102,39 +1160,11 @@
         setTimeout(() => { isFirstLoad = false; }, 1000);
         
         // ============================================
-        // 📋 COPY HELPERS (សម្រាប់តែ FOR PC)
+        // 📋 TOAST HELPER
         // ============================================
         function showToast(element) {
             element.style.display = 'flex';
             setTimeout(() => { element.style.display = 'none'; }, 1800);
-        }
-        
-        function copyM() {
-            const content = document.getElementById("mToCopy").textContent;
-            navigator.clipboard.writeText(content).then(() => showToast(document.getElementById("toastM")))
-                .catch(() => fallbackCopyText(content, "toastM"));
-        }
-        
-        function copyC() {
-            const content = document.getElementById("cToCopy").textContent;
-            navigator.clipboard.writeText(content).then(() => showToast(document.getElementById("toastC")))
-                .catch(() => fallbackCopyText(content, "toastC"));
-        }
-        
-        function fallbackCopyText(text, toastId) {
-            const textArea = document.createElement("textarea");
-            textArea.value = text;
-            textArea.style.position = "fixed";
-            textArea.style.opacity = "0";
-            document.body.appendChild(textArea);
-            textArea.select();
-            try {
-                if (document.execCommand('copy')) showToast(document.getElementById(toastId));
-                else alert("មិនអាចចម្លងអត្ថបទបានទេ។");
-            } catch (err) {
-                alert("មិនអាចចម្លងអត្ថបទបានទេ។");
-            }
-            document.body.removeChild(textArea);
         }
         
         // ============================================
